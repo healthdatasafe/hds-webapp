@@ -7,6 +7,12 @@ import { cn } from '@/lib/utils';
 const BottomNav = () => {
   const location = useLocation();
   const isActive = (path: string) => location.pathname.includes(path);
+  const isChatRoute = location.pathname === '/chat';
+
+  // Hide the bottom navigation on the chat page
+  if (isChatRoute) {
+    return null;
+  }
 
   const navItems = [
     {
