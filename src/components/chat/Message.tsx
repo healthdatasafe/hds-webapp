@@ -44,7 +44,7 @@ const Message = ({ id, senderId, content, timestamp, showAvatar = true }: Messag
         <div className={cn(
           "px-4 py-2 break-words",
           isCurrentUser 
-            ? "bg-[#404040] text-white rounded-2xl rounded-tr-none" 
+            ? "bg-[#893228] text-white rounded-2xl rounded-tr-none" 
             : "bg-[#444] text-white rounded-2xl rounded-tl-none"
         )}>
           {content}
