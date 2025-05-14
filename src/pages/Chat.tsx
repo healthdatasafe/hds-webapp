@@ -16,13 +16,22 @@ const Chat = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   
+  // Modified to add a delay and only redirect if still no conversation after the delay
   useEffect(() => {
     if (!currentUser) {
       navigate('/login');
-    } else if (!currentConversation) {
-      // If no conversation is selected, redirect to connections page
-      navigate('/connections');
+      return;
     }
+    
+    // Add a small delay to ensure context has time to update
+    const timer = setTimeout(() => {
+      if (!currentConversation) {
+        // Only redirect if there's still no conversation after the delay
+        navigate('/connections');
+      }
+    }, 300);
+    
+    return () => clearTimeout(timer); // Clean up the timer
   }, [currentUser, currentConversation, navigate]);
   
   // Find the other participant in a direct message
@@ -39,9 +48,22 @@ const Chat = () => {
   const otherParticipant = getOtherParticipant();
   const conversationName = currentConversation?.name || otherParticipant?.displayName || 'Unknown';
   
+  // Add loading state during the delay
+  if (!currentConversation) {
+    return (
+      <div className="flex flex-col h-screen items-center justify-center bg-[#222]">
+        <div className="text-center">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" />
+          <p className="mt-2 text-muted-foreground">Loading conversation...</p>
+        </div>
+        <BottomNav />
+      </div>
+    );
+  }
+  
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-[#222]">
-      {currentConversation ? (
+      {currentConversation && (
         <>
           {/* Header with back button and contact name */}
           <div className="sticky top-0 z-10 bg-[#222] border-b border-gray-800 p-4 flex items-center">
@@ -66,21 +88,6 @@ const Chat = () => {
           
           <MessageInput />
         </>
-      ) : (
-        <div className="flex flex-col items-center justify-center h-full pb-16">
-          <div className="p-8 max-w-md text-center">
-            <h3 className="text-xl font-medium mb-2">No conversation selected</h3>
-            <p className="text-muted-foreground">
-              Choose a connection from the connections page.
-            </p>
-            <Link 
-              to="/connections" 
-              className="mt-4 inline-flex items-center px-4 py-2 bg-primary rounded-md text-white"
-            >
-              Go to Connections
-            </Link>
-          </div>
-        </div>
       )}
       
       <BottomNav />

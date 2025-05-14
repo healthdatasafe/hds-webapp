@@ -82,8 +82,14 @@ const ChatSidebar = () => {
   };
   
   const handleSelectConversation = (conversationId: string) => {
+    // First select the conversation in context
     selectConversation(conversationId);
-    navigate('/chat');
+    
+    // Wait a moment to ensure the state updates before navigation
+    // This helps prevent the race condition that's causing the bounce back
+    setTimeout(() => {
+      navigate('/chat');
+    }, 100);
   };
   
   return (
