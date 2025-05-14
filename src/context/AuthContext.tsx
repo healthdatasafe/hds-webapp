@@ -107,11 +107,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     try {
       // Register with HDS using our service wrapper
-      await pryvService.authenticate();
+      /// await pryvService.authenticate();
       
       // Mock successful registration
       const mockUser: User = {
         id: 'user_' + Math.random().toString(36).substr(2, 9),
+        personalApiEndpoint: 'toto',
         username,
         displayName: username,
         email,
