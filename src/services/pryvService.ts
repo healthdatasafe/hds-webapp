@@ -46,7 +46,7 @@ class PryvService {
       console.log('Authenticating with HDS with config:', this.config);
       
       // Create a service object according to HDS docs
-      this.pryvConnection = await this.service.login(username, login, this.config.appId);
+      this.pryvConnection = await this.service.login(username, password, this.config.appId);
       
       return this.pryvConnection;
     } catch (error) {
