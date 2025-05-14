@@ -7,9 +7,9 @@ import { useAuth } from '@/context/AuthContext';
 const Index = () => {
   const { currentUser, isLoading } = useAuth();
 
-  // If already logged in, redirect to chat
+  // If already logged in, redirect to connections
   if (!isLoading && currentUser) {
-    return <Navigate to="/chat" replace />;
+    return <Navigate to="/connections" replace />;
   }
 
   return (

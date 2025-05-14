@@ -91,7 +91,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.setItem('chatUser', JSON.stringify(mockUser));
       setCurrentUser(mockUser);
       toast.success("Logged in successfully!");
-      navigate('/chat');
+      navigate('/connections');
     } catch (error) {
       console.error('Login failed:', error);
       toast.error("Login failed. Please check your credentials.");
@@ -118,7 +118,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.setItem('chatUser', JSON.stringify(mockUser));
       setCurrentUser(mockUser);
       toast.success("Account created successfully!");
-      navigate('/chat');
+      navigate('/connections');
     } catch (error) {
       console.error('Registration failed:', error);
       toast.error("Registration failed. Please try again.");

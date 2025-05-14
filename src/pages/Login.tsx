@@ -18,9 +18,9 @@ const Login = () => {
     );
   }
   
-  // If already logged in, redirect to chat
+  // If already logged in, redirect to connections
   if (currentUser) {
-    return <Navigate to="/chat" replace />;
+    return <Navigate to="/connections" replace />;
   }
 
   return (
