@@ -31,7 +31,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Initialize our custom PryvService wrapper
   const pryvService = new PryvService({
     domain: 'pryv.me',
-    appId: 'chat-app',
+    appId: 'health-data-safe',
     language: 'en',
   });
 
@@ -45,7 +45,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (savedUser) {
           const parsedUser = JSON.parse(savedUser);
           
-          // Verify the session with Pryv
+          // Verify the session with HDS
           try {
             // Use our custom service to authenticate
             await pryvService.authenticate();
@@ -69,10 +69,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      // Extract username from email for Pryv 
+      // Extract username from email for HDS 
       const username = email.split('@')[0];
       
-      // Authenticate with Pryv using our service
+      // Authenticate with HDS using our service
       await pryvService.authenticate();
       
       // Create user object from successful login
@@ -100,7 +100,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const register = async (email: string, username: string, password: string) => {
     setIsLoading(true);
     try {
-      // Register with Pryv using our service wrapper
+      // Register with HDS using our service wrapper
       await pryvService.authenticate();
       
       // Mock successful registration

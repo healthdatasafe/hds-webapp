@@ -15,9 +15,9 @@ const Index = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="max-w-md w-full px-4 py-8 text-center">
-        <h1 className="text-4xl font-bold text-primary mb-4">Chat App</h1>
+        <h1 className="text-4xl font-bold text-primary mb-4">Health Data Safe</h1>
         <p className="text-lg text-muted-foreground mb-6">
-          Welcome to our real-time chat application powered by Pryv.io
+          Welcome to our real-time health data application powered by HDS
         </p>
         <div className="space-y-4">
           <Button asChild className="w-full" size="lg">
@@ -28,7 +28,7 @@ const Index = () => {
           </Button>
         </div>
         <p className="mt-8 text-sm text-muted-foreground">
-          Secure chat with end-to-end encryption and data privacy.
+          Secure health data with end-to-end encryption and data privacy.
         </p>
       </div>
     </div>

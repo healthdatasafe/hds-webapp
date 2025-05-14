@@ -19,11 +19,11 @@ class PryvService {
   // Initialize Pryv connection with auth
   async authenticate() {
     try {
-      // In a real implementation, we would use Pryv.io's proper authentication flow
+      // In a real implementation, we would use HDS's proper authentication flow
       // This is a simplified version that creates a mock connection
-      console.log('Authenticating with Pryv.io with config:', this.config);
+      console.log('Authenticating with HDS with config:', this.config);
       
-      // Create a service object according to Pryv docs
+      // Create a service object according to HDS docs
       const service = new Pryv.Service(this.config.domain);
       
       // For this mock implementation, we'll just simulate a successful connection
@@ -34,28 +34,26 @@ class PryvService {
       
       return this.pryvConnection;
     } catch (error) {
-      console.error('Pryv authentication error:', error);
+      console.error('HDS authentication error:', error);
       throw error;
     }
   }
   
-  // Store message in Pryv
+  // Store message in HDS
   async storeMessage(conversationId: string, message: any) {
-    // In a real implementation, we would create events in Pryv.io
-    // https://api.pryv.com/reference/#create-event
+    // In a real implementation, we would create events in HDS
     console.log(`Storing message in conversation ${conversationId}:`, message);
     
     // Return mock success response
     return {
-      id: `pryv-${Date.now()}`,
+      id: `hds-${Date.now()}`,
       success: true
     };
   }
   
-  // Get messages from Pryv
+  // Get messages from HDS
   async getMessages(conversationId: string) {
-    // In a real implementation, we would get events from Pryv.io
-    // https://api.pryv.com/reference/#get-events
+    // In a real implementation, we would get events from HDS
     console.log(`Getting messages for conversation ${conversationId}`);
     
     // Return mock messages

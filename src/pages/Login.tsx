@@ -26,8 +26,8 @@ const Login = () => {
   return (
     <div className="min-h-screen flex flex-col justify-center px-4 py-12">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-primary">Chat App</h1>
-        <p className="text-muted-foreground">Secured by Pryv.io</p>
+        <h1 className="text-3xl font-bold text-primary">Health Data Safe</h1>
+        <p className="text-muted-foreground">Secured by HDS</p>
       </div>
       <LoginForm />
     </div>
