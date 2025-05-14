@@ -44,6 +44,10 @@ class PryvService {
       // In a real implementation, we would use HDS's proper authentication flow
       // This is a simplified version that creates a mock connection
       console.log('Authenticating with HDS with config:', this.config);
+
+      // check service
+      const serviceInfo = await this.service.info();
+      console.log('Service Infos', serviceInfo);
       
       // Create a service object according to HDS docs
       this.pryvConnection = await this.service.login(username, password, this.config.appId);
