@@ -30,7 +30,7 @@ class PryvService {
         throw new Error('Failed validating existing user');
       }
       this.pryvConnection = potentialConnection;
-      
+      console.log('Authicated with existing apiEndpoint');
       return this.pryvConnection;
     } catch (error) {
       console.error('HDS authentication error:', error);
