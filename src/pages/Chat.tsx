@@ -21,14 +21,16 @@ const Chat = () => {
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
-      <div className="w-80 h-full lg:w-96">
+      {/* Sidebar - hidden on mobile */}
+      <div className="hidden md:block w-80 h-full lg:w-96">
         <ChatSidebar />
       </div>
       
-      <div className="flex flex-col flex-1 h-full">
+      {/* Mobile version - full screen */}
+      <div className="flex flex-col flex-1 h-full bg-[#222]">
         {currentConversation ? (
           <>
-            <div className="flex-1 overflow-y-auto pb-16">
+            <div className="flex-1 overflow-y-auto">
               <MessageList />
             </div>
             <MessageInput />

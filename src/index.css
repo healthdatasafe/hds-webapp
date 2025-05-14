@@ -5,72 +5,72 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 0 0% 13%; /* #222222 */
+    --foreground: 210 40% 98%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 0 0% 13%; /* #222222 */
+    --card-foreground: 210 40% 98%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 13%; /* #222222 */
+    --popover-foreground: 210 40% 98%;
 
-    --primary: 235 82% 63%;
+    --primary: 0 73% 42%;  /* #AF2121 - red color */
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 0 0% 27%; /* #444444 */
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 0 0% 27%; /* #444444 */
+    --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 225 70% 97%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 0 0% 27%; /* #444444 */
+    --accent-foreground: 210 40% 98%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 235 82% 63%;
+    --border: 0 0% 30%;
+    --input: 0 0% 30%;
+    --ring: 0 73% 42%; /* #AF2121 - red color */
 
-    --radius: 0.5rem;
+    --radius: 1rem;
 
-    --chat-sent: 235 82% 63%;
-    --chat-received: 210 40% 96.1%;
-    --chat-bubble-radius: 1.25rem;
+    --chat-sent: 0 73% 42%; /* #AF2121 - red color */
+    --chat-received: 0 0% 27%; /* #444444 */
+    --chat-bubble-radius: 1rem;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: 0 0% 13%; /* #222222 */
     --foreground: 210 40% 98%;
 
-    --card: 222.2 84% 4.9%;
+    --card: 0 0% 13%; /* #222222 */
     --card-foreground: 210 40% 98%;
 
-    --popover: 222.2 84% 4.9%;
+    --popover: 0 0% 13%; /* #222222 */
     --popover-foreground: 210 40% 98%;
 
-    --primary: 235 82% 63%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 0 73% 42%;  /* #AF2121 - red color */
+    --primary-foreground: 210 40% 98%;
 
-    --secondary: 217.2 32.6% 17.5%;
+    --secondary: 0 0% 27%; /* #444444 */
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 217.2 32.6% 17.5%;
+    --muted: 0 0% 27%; /* #444444 */
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 225 70% 20%;
+    --accent: 0 0% 27%; /* #444444 */
     --accent-foreground: 210 40% 98%;
 
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 235 82% 63%;
+    --border: 0 0% 30%;
+    --input: 0 0% 30%;
+    --ring: 0 73% 42%; /* #AF2121 - red color */
 
-    --chat-sent: 235 82% 63%;
-    --chat-received: 217.2 32.6% 17.5%;
+    --chat-sent: 0 73% 42%; /* #AF2121 - red color */
+    --chat-received: 0 0% 27%; /* #444444 */
   }
 }
 
@@ -112,7 +112,7 @@
 }
 
 .messages-container::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(255, 255, 255, 0.1);
   border-radius: 20px;
 }
 

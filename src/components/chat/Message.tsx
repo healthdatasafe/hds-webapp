@@ -27,16 +27,14 @@ const Message = ({ id, senderId, content, timestamp, showAvatar = true }: Messag
   
   return (
     <div className={cn(
-      "flex items-end gap-2 mb-2",
-      isCurrentUser && "flex-row-reverse"
+      "flex items-end gap-2 mb-3",
+      isCurrentUser ? "flex-row-reverse" : ""
     )}>
       {showAvatar && !isCurrentUser ? (
-        <Avatar name={sender.displayName} src={sender.avatarUrl} className="h-8 w-8" />
-      ) : showAvatar && isCurrentUser ? (
-        <div className="w-8" /> // Spacer for alignment
+        <Avatar name={sender.displayName} src={sender.avatarUrl} className="h-10 w-10" />
       ) : null}
       
-      <div className="flex flex-col max-w-[80%]">
+      <div className="flex flex-col max-w-[75%]">
         {!isCurrentUser && showAvatar && (
           <span className="text-xs text-muted-foreground mb-1 ml-1">
             {sender.displayName}
@@ -44,13 +42,16 @@ const Message = ({ id, senderId, content, timestamp, showAvatar = true }: Messag
         )}
         
         <div className={cn(
-          isCurrentUser ? "chat-bubble-sent" : "chat-bubble-received"
+          "px-4 py-2 break-words",
+          isCurrentUser 
+            ? "bg-red-700 text-white rounded-2xl rounded-tr-none" 
+            : "bg-[#444] text-white rounded-2xl rounded-tl-none"
         )}>
           {content}
         </div>
         
         <span className={cn(
-          "text-[10px] text-muted-foreground mt-1",
+          "text-xs text-muted-foreground mt-1",
           isCurrentUser ? "text-right mr-1" : "ml-1"
         )}>
           {time}

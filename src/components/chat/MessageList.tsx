@@ -5,7 +5,7 @@ import Message from './Message';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const MessageList = () => {
-  const { messages, isLoadingMessages } = useChat();
+  const { messages, isLoadingMessages, currentConversation, contacts } = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   // Scroll to bottom when messages change
@@ -36,6 +36,12 @@ const MessageList = () => {
     );
   }
   
+  // Find the other participant
+  const otherParticipantId = currentConversation?.participants.find(
+    id => id !== contacts.find(c => c.id === id)?.id
+  );
+  const otherParticipant = contacts.find(contact => contact.id === otherParticipantId);
+  
   if (messages.length === 0) {
     return (
       <div className="flex h-full items-center justify-center text-muted-foreground">
@@ -45,7 +51,22 @@ const MessageList = () => {
   }
   
   return (
-    <div className="flex flex-col p-4 overflow-y-auto messages-container">
+    <div className="flex flex-col p-4 overflow-y-auto messages-container bg-[#222] pb-20">
+      {currentConversation && (
+        <div className="sticky top-0 z-10 bg-[#222] border-b border-gray-800 pb-2 mb-4 flex items-center">
+          <Avatar 
+            name={otherParticipant?.displayName || "Contact"}
+            src={otherParticipant?.avatarUrl}
+            className="h-12 w-12 mr-3"
+          />
+          <div className="flex-1">
+            <h3 className="font-semibold text-lg text-white">
+              {otherParticipant?.displayName || "Contact"}
+            </h3>
+          </div>
+        </div>
+      )}
+      
       {groupedMessages.map((message) => (
         <Message 
           key={message.id} 
@@ -65,10 +86,10 @@ const MessageList = () => {
 const MessageSkeleton = ({ align }: { align: 'left' | 'right' }) => {
   return (
     <div className={`flex items-end gap-2 ${align === 'right' ? 'flex-row-reverse' : ''}`}>
-      {align === 'left' && <Skeleton className="h-8 w-8 rounded-full" />}
+      {align === 'left' && <Skeleton className="h-10 w-10 rounded-full" />}
       <div className="flex flex-col">
         {align === 'left' && <Skeleton className="h-3 w-20 mb-1" />}
-        <Skeleton className={`h-12 w-[200px] rounded-[var(--chat-bubble-radius)]`} />
+        <Skeleton className={`h-12 w-[200px] rounded-2xl`} />
         <Skeleton className={`h-2 w-12 mt-1 ${align === 'right' ? 'ml-auto' : ''}`} />
       </div>
     </div>
