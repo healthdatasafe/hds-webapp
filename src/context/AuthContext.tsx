@@ -83,7 +83,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Create user object from successful login
       const mockUser: User = {
         id: 'user_' + Math.random().toString(36).substr(2, 9),
-        personalApiEndpoint: personalConnection.apiEndpoint,
+        personalApiEndpoint: personalConnection.apiEndpoint as string,
         username,
         displayName: username,
         email,
