@@ -56,19 +56,22 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const enhancedMessages = mockMessages.map((msg, index) => {
           // Add a form to some messages from contacts (not from current user)
           if (index % 5 === 0 && msg.senderId !== currentUser?.id) {
+            // Fix: Use proper type for formType instead of dynamic string
+            const formType = index % 15 === 0 ? 'symptomReport' : 
+                          index % 10 === 0 ? 'medicationReport' : 
+                          'feedbackForm';
+                          
             return {
               ...msg,
               hasForm: true,
               formCompleted: false,
-              formType: index % 15 === 0 ? 'symptomReport' : 
-                        index % 10 === 0 ? 'medicationReport' : 
-                        'feedbackForm'
+              formType: formType as 'symptomReport' | 'medicationReport' | 'feedbackForm'
             };
           }
           return msg;
         });
         
-        setMessages(enhancedMessages);
+        setMessages(enhancedMessages as Message[]);
         setIsLoadingMessages(false);
         
         // Mark conversation as read
@@ -158,9 +161,11 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (Math.random() > 0.7) {
         setTimeout(() => {
           const isFormRequest = Math.random() > 0.5;
-          const formType = Math.random() > 0.6 ? 'symptomReport' : 
-                          Math.random() > 0.3 ? 'medicationReport' : 
-                          'feedbackForm';
+          // Fix: Use typed formType directly instead of string
+          const formType: 'symptomReport' | 'medicationReport' | 'feedbackForm' = 
+              Math.random() > 0.6 ? 'symptomReport' : 
+              Math.random() > 0.3 ? 'medicationReport' : 
+              'feedbackForm';
           
           const responseMessage: Message = {
             id: `msg_${Date.now() + 1}`,
@@ -216,3 +221,4 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;
 };
+
