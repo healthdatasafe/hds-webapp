@@ -51,6 +51,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             // Use our custom service to authenticate
             await pryvService.authenticateWithEndpoint(parsedUser.personalApiEndpoint);
             setCurrentUser(parsedUser);
+            throw new Error('X');
           } catch (error) {
             // If verification fails, clear localStorage
             localStorage.removeItem('chatUser');
