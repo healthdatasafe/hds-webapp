@@ -24,6 +24,8 @@ interface Contact {
   displayName: string;
   avatarUrl?: string;
   status?: 'online' | 'offline' | 'away';
+  phone?: string; // Added phone property
+  organization?: string; // Added organization property
 }
 
 interface ChatContextType {
@@ -46,19 +48,25 @@ const generateMockContacts = (currentUserId: string): Contact[] => {
       id: 'contact_1',
       username: 'sarah_parker',
       displayName: 'Sarah Parker',
-      status: 'online'
+      status: 'online',
+      phone: '+1 (555) 123-4567',
+      organization: 'General Hospital'
     },
     {
       id: 'contact_2',
       username: 'mike_johnson',
       displayName: 'Mike Johnson',
-      status: 'away'
+      status: 'away',
+      phone: '+1 (555) 987-6543',
+      organization: 'City Medical Center'
     },
     {
       id: 'contact_3',
       username: 'emma_williams',
       displayName: 'Emma Williams',
-      status: 'offline'
+      status: 'offline',
+      phone: '+1 (555) 456-7890',
+      organization: 'Private Practice'
     }
   ];
 };
