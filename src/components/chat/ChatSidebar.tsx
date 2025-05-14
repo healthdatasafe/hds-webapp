@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useChat } from '@/context/ChatContext';
 import { useAuth } from '@/context/AuthContext';
@@ -82,14 +81,16 @@ const ChatSidebar = () => {
   };
   
   const handleSelectConversation = (conversationId: string) => {
-    // First select the conversation in context
+    console.log("Selecting conversation:", conversationId);
+    
+    // Set the conversation in the context first
     selectConversation(conversationId);
     
-    // Wait a moment to ensure the state updates before navigation
-    // This helps prevent the race condition that's causing the bounce back
+    // Add a short delay before navigation to ensure state is updated
+    // Using a longer delay to ensure state has time to propagate
     setTimeout(() => {
       navigate('/chat');
-    }, 100);
+    }, 300);
   };
   
   return (
