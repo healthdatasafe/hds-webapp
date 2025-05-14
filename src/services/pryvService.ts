@@ -18,10 +18,28 @@ class PryvService {
     this.service = new Pryv.Service(this.config.serviceInfoUrl);
   }
 
-  
+  // authenticate with an existing api endpoint
+  async authenticateWithEndpoint(apiEndpoint: string) {
+    try {
+      const potentialConnection = new Pryv.Connection(apiEndpoint);
+
+      // test if connection is valid 
+      const infos = await potentialConnection.accessInfo();
+      console.log('HDS accessInfo:', infos);
+      if (infos.error) {
+        throw new Error('Failed validating existing user');
+      }
+      this.pryvConnection = potentialConnection;
+      
+      return this.pryvConnection;
+    } catch (error) {
+      console.error('HDS authentication error:', error);
+      throw error;
+    }
+  }
   
   // Initialize Pryv connection with auth
-  async authenticate(username: <string>, password: <string>) {
+  async authenticate(username: string, password: string) {
     try {
       // In a real implementation, we would use HDS's proper authentication flow
       // This is a simplified version that creates a mock connection
