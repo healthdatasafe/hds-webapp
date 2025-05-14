@@ -80,7 +80,10 @@ const MessageList = ({ hideHeader = false }: MessageListProps) => {
           senderId={message.senderId} 
           content={message.content} 
           timestamp={message.timestamp}
-          showAvatar={message.showAvatar} 
+          showAvatar={message.showAvatar}
+          hasForm={message.hasForm}
+          formCompleted={message.formCompleted}
+          formType={message.formType}
         />
       ))}
       <div ref={messagesEndRef} />

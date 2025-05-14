@@ -7,6 +7,9 @@ export interface Message {
   content: string;
   timestamp: number;
   read: boolean;
+  hasForm?: boolean;
+  formCompleted?: boolean;
+  formType?: 'symptomReport' | 'medicationReport' | 'feedbackForm';
 }
 
 export interface Conversation {
@@ -36,4 +39,5 @@ export interface ChatContextType {
   sendMessage: (content: string) => Promise<void>;
   selectConversation: (conversationId: string) => void;
   startNewConversation: (contactId: string) => void;
+  completeMessageForm: (messageId: string) => void;
 }

@@ -51,7 +51,24 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
           currentConversation.id, 
           currentConversation.participants
         );
-        setMessages(mockMessages);
+        
+        // Add some messages with forms (for demo purposes)
+        const enhancedMessages = mockMessages.map((msg, index) => {
+          // Add a form to some messages from contacts (not from current user)
+          if (index % 5 === 0 && msg.senderId !== currentUser?.id) {
+            return {
+              ...msg,
+              hasForm: true,
+              formCompleted: false,
+              formType: index % 15 === 0 ? 'symptomReport' : 
+                        index % 10 === 0 ? 'medicationReport' : 
+                        'feedbackForm'
+            };
+          }
+          return msg;
+        });
+        
+        setMessages(enhancedMessages);
         setIsLoadingMessages(false);
         
         // Mark conversation as read
@@ -66,7 +83,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } else {
       setMessages([]);
     }
-  }, [currentConversation]);
+  }, [currentConversation, currentUser]);
 
   const selectConversation = (conversationId: string) => {
     console.log("ChatContext: selecting conversation", conversationId);
@@ -140,12 +157,22 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Simulate response after a delay (for demo purposes)
       if (Math.random() > 0.7) {
         setTimeout(() => {
+          const isFormRequest = Math.random() > 0.5;
+          const formType = Math.random() > 0.6 ? 'symptomReport' : 
+                          Math.random() > 0.3 ? 'medicationReport' : 
+                          'feedbackForm';
+          
           const responseMessage: Message = {
             id: `msg_${Date.now() + 1}`,
             senderId: currentConversation.participants.find(p => p !== currentUser.id) || '',
-            content: `This is an automated response to your message: "${content}"`,
+            content: isFormRequest 
+              ? `Could you please fill out this ${formType.replace('Report', '')} form?` 
+              : `This is an automated response to your message: "${content}"`,
             timestamp: Date.now(),
-            read: false
+            read: false,
+            hasForm: isFormRequest,
+            formCompleted: false,
+            formType: isFormRequest ? formType : undefined
           };
           
           setMessages(prev => [...prev, responseMessage]);
@@ -165,6 +192,16 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const completeMessageForm = (messageId: string) => {
+    setMessages(prevMessages => 
+      prevMessages.map(msg => 
+        msg.id === messageId 
+          ? { ...msg, formCompleted: true } 
+          : msg
+      )
+    );
+  };
+
   const value = {
     conversations,
     currentConversation,
@@ -173,7 +210,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     isLoadingMessages,
     sendMessage,
     selectConversation,
-    startNewConversation
+    startNewConversation,
+    completeMessageForm
   };
 
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;
