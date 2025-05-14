@@ -31,7 +31,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Initialize our custom PryvService wrapper
   const pryvService = new PryvService({
-    pryvServiceInfo: 'https://demo.datasafe.dev/reg/service/info',
+    serviceInfoUrl: 'https://demo.datasafe.dev/reg/service/info',
     appId: 'health-data-safe',
     language: 'en',
   });
