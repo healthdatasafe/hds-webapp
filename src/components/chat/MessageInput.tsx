@@ -2,7 +2,7 @@
 import React, { useState, KeyboardEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { useChat } from '@/context/ChatContext';
+import { useChat } from '@/hooks/useChat';
 import { ArrowUp, Plus, Mic } from 'lucide-react';
 
 const MessageInput = () => {

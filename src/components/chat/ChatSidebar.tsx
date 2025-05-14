@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { useChat } from '@/context/ChatContext';
+import { useChat } from '@/hooks/useChat';
 import { useAuth } from '@/context/AuthContext';
 import Avatar from '../common/Avatar';
 import { Button } from '@/components/ui/button';

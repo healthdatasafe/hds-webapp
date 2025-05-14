@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useChat } from '@/context/ChatContext';
+import { useChat } from '@/hooks/useChat';
 import ChatSidebar from '@/components/chat/ChatSidebar';
 
 const Connections = () => {

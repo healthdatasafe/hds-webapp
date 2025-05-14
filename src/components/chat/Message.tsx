@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { useChat } from '@/context/ChatContext';
+import { useChat } from '@/hooks/useChat';
 import { cn } from '@/lib/utils';
 import Avatar from '../common/Avatar';
 

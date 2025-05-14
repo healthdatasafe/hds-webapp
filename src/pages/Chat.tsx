@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { useChat } from '@/context/ChatContext';
+import { useChat } from '@/hooks/useChat';
 import MessageList from '@/components/chat/MessageList';
 import MessageInput from '@/components/chat/MessageInput';
 import { useAuth } from '@/context/AuthContext';
@@ -8,7 +8,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, Trash2 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import Avatar from '@/components/common/Avatar';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
 
 const Chat = () => {
@@ -124,6 +124,7 @@ const Chat = () => {
       {/* Contact Details Dialog */}
       <Dialog open={showContactDetails} onOpenChange={setShowContactDetails}>
         <DialogContent className="bg-[#222] text-white border-gray-800 sm:max-w-md">
+          <DialogTitle className="sr-only">Contact Details</DialogTitle>
           <div className="flex flex-col items-center mb-4">
             <Avatar 
               name={conversationName}

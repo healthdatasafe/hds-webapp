@@ -1,6 +1,6 @@
 
 import React, { useEffect, useRef } from 'react';
-import { useChat } from '@/context/ChatContext';
+import { useChat } from '@/hooks/useChat';
 import Message from './Message';
 import { Skeleton } from '@/components/ui/skeleton';
 import Avatar from '../common/Avatar';
