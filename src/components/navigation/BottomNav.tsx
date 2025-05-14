@@ -21,7 +21,7 @@ const BottomNav = () => {
     },
     {
       name: 'Connections',
-      path: '/chat',
+      path: '/connections',
       icon: Users,
     },
     {

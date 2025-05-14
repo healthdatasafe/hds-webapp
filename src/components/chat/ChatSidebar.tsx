@@ -13,12 +13,14 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { Search, User, Users, Plus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const ChatSidebar = () => {
   const { conversations, contacts, selectConversation, currentConversation } = useChat();
   const { currentUser, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [view, setView] = useState<'conversations' | 'contacts'>('conversations');
+  const navigate = useNavigate();
   
   // Filter conversations based on search
   const filteredConversations = conversations
@@ -79,6 +81,11 @@ const ChatSidebar = () => {
     };
   };
   
+  const handleSelectConversation = (conversationId: string) => {
+    selectConversation(conversationId);
+    navigate('/chat');
+  };
+  
   return (
     <div className="flex flex-col h-full bg-[#1a1a1a] text-white">
       {/* Header with title and add button */}
@@ -126,7 +133,7 @@ const ChatSidebar = () => {
                       "w-full justify-start px-4 py-3 rounded-none border-b border-gray-800 hover:bg-gray-800",
                       isActive && "bg-gray-800"
                     )}
-                    onClick={() => selectConversation(conversation.id)}
+                    onClick={() => handleSelectConversation(conversation.id)}
                   >
                     <div className="flex items-center w-full">
                       <div className="relative mr-3">

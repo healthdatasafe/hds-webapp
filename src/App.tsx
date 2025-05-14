@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ChatLayout from "./components/chat/ChatLayout";
 import Chat from "./pages/Chat";
+import Connections from "./pages/Connections";
 import Diary from "./pages/Diary";
 import Tasks from "./pages/Tasks";
 import Settings from "./pages/Settings";
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/register" element={<Register />} />
             <Route path="/" element={<ChatLayout />}>
               <Route path="/chat" element={<Chat />} />
+              <Route path="/connections" element={<Connections />} />
               <Route path="/diary" element={<Diary />} />
               <Route path="/tasks" element={<Tasks />} />
               <Route path="/settings" element={<Settings />} />

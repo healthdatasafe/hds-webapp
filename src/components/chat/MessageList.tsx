@@ -5,7 +5,11 @@ import Message from './Message';
 import { Skeleton } from '@/components/ui/skeleton';
 import Avatar from '../common/Avatar';
 
-const MessageList = () => {
+interface MessageListProps {
+  hideHeader?: boolean;
+}
+
+const MessageList = ({ hideHeader = false }: MessageListProps) => {
   const { messages, isLoadingMessages, currentConversation, contacts } = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
@@ -53,7 +57,8 @@ const MessageList = () => {
   
   return (
     <div className="flex flex-col p-4 overflow-y-auto messages-container bg-[#222] pb-20">
-      {currentConversation && (
+      {/* Header is now optional based on the hideHeader prop */}
+      {!hideHeader && currentConversation && (
         <div className="sticky top-0 z-10 bg-[#222] border-b border-gray-800 pb-2 mb-4 flex items-center">
           <Avatar 
             name={otherParticipant?.displayName || "Contact"}
