@@ -82,6 +82,11 @@
   body {
     @apply bg-background text-foreground;
   }
+  
+  /* Force dark mode for our app */
+  html {
+    color-scheme: dark;
+  }
 }
 
 /* Chat specific styles */
@@ -109,4 +114,9 @@
 .messages-container::-webkit-scrollbar-thumb {
   background-color: rgba(0, 0, 0, 0.2);
   border-radius: 20px;
+}
+
+/* Bottom navigation padding for iOS safe area */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0.5rem);
 }

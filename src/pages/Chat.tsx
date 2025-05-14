@@ -6,6 +6,7 @@ import MessageList from '@/components/chat/MessageList';
 import MessageInput from '@/components/chat/MessageInput';
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import BottomNav from '@/components/navigation/BottomNav';
 
 const Chat = () => {
   const { currentUser } = useAuth();
@@ -19,7 +20,7 @@ const Chat = () => {
   }, [currentUser, navigate]);
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-background">
       <div className="w-80 h-full lg:w-96">
         <ChatSidebar />
       </div>
@@ -27,22 +28,24 @@ const Chat = () => {
       <div className="flex flex-col flex-1 h-full">
         {currentConversation ? (
           <>
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto pb-16">
               <MessageList />
             </div>
             <MessageInput />
           </>
         ) : (
-          <div className="flex flex-col items-center justify-center h-full">
+          <div className="flex flex-col items-center justify-center h-full pb-16">
             <div className="p-8 max-w-md text-center">
               <h3 className="text-xl font-medium mb-2">No conversation selected</h3>
               <p className="text-muted-foreground">
-                Choose a conversation from the sidebar or start a new one.
+                Choose a connection from the sidebar or add a new one.
               </p>
             </div>
           </div>
         )}
       </div>
+      
+      <BottomNav />
     </div>
   );
 };

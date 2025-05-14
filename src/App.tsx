@@ -9,6 +9,9 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ChatLayout from "./components/chat/ChatLayout";
 import Chat from "./pages/Chat";
+import Diary from "./pages/Diary";
+import Tasks from "./pages/Tasks";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import { AuthProvider } from "./context/AuthContext";
 
@@ -27,6 +30,9 @@ const App = () => (
             <Route path="/register" element={<Register />} />
             <Route path="/" element={<ChatLayout />}>
               <Route path="/chat" element={<Chat />} />
+              <Route path="/diary" element={<Diary />} />
+              <Route path="/tasks" element={<Tasks />} />
+              <Route path="/settings" element={<Settings />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
