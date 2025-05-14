@@ -18,10 +18,7 @@ class PryvService {
     this.service = new Pryv.Service(this.config.serviceInfoUrl);
   }
 
-  // authenticate with an existing api endpoint
-  async authenticateWithEndpoint(apiEndpoint: <string>) {
-    
-  }
+  
   
   // Initialize Pryv connection with auth
   async authenticate(username: <string>, password: <string>) {
