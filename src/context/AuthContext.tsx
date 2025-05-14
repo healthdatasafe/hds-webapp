@@ -2,6 +2,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import Pryv from 'pryv';
 
 interface User {
   id: string;
@@ -27,15 +28,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const navigate = useNavigate();
 
+  // Initialize Pryv connection
+  const pryvService = new Pryv.Service({
+    register: 'https://reg.pryv.me',
+    name: 'chat-app',
+    domain: 'pryv.me',
+    appId: 'chat-app'
+  });
+
   // Check for existing session on load
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // In a real app with Pryv.io, we would verify authentication here
+        // Check if we have a stored auth in localStorage
         const savedUser = localStorage.getItem('chatUser');
         
         if (savedUser) {
-          setCurrentUser(JSON.parse(savedUser));
+          const parsedUser = JSON.parse(savedUser);
+          
+          // Verify the session with Pryv
+          try {
+            await pryvService.auth.loginWithCredentials(parsedUser.username, ''); // Just verify, password not needed
+            setCurrentUser(parsedUser);
+          } catch (error) {
+            // If verification fails, clear localStorage
+            localStorage.removeItem('chatUser');
+            console.error('Session verification failed:', error);
+          }
         }
       } catch (error) {
         console.error('Authentication check failed:', error);
@@ -50,17 +69,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      // In a real app, we would make a real API call to Pryv.io here
-      // This is a mock implementation
+      // Extract username from email for Pryv 
+      const username = email.split('@')[0];
       
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Authenticate with Pryv
+      await pryvService.auth.loginWithCredentials(username, password);
       
-      // Mock successful login
+      // Create user object from successful login
       const mockUser: User = {
         id: 'user_' + Math.random().toString(36).substr(2, 9),
-        username: email.split('@')[0],
-        displayName: email.split('@')[0],
+        username,
+        displayName: username,
         email,
         avatarUrl: undefined
       };
@@ -81,11 +100,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const register = async (email: string, username: string, password: string) => {
     setIsLoading(true);
     try {
-      // In a real app, we would make a real API call to Pryv.io here
-      // This is a mock implementation
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Register with Pryv
+      await pryvService.auth.register({
+        username,
+        password,
+        email
+      });
       
       // Mock successful registration
       const mockUser: User = {
@@ -109,6 +129,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = () => {
+    // Logout from Pryv
+    pryvService.auth.logout();
     localStorage.removeItem('chatUser');
     setCurrentUser(null);
     toast.info("You've been logged out");

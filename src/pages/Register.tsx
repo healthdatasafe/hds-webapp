@@ -27,7 +27,7 @@ const Register = () => {
     <div className="min-h-screen flex flex-col justify-center px-4 py-12">
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-primary">Chat App</h1>
-        <p className="text-muted-foreground">Powered by Pryv.io</p>
+        <p className="text-muted-foreground">Secured by Pryv.io</p>
       </div>
       <RegisterForm />
     </div>

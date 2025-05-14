@@ -51,8 +51,8 @@ const RegisterForm = () => {
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Create an account</CardTitle>
-        <CardDescription>Get started with your new account</CardDescription>
+        <CardTitle className="text-2xl">Create a Pryv account</CardTitle>
+        <CardDescription>Create your new Pryv account</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -116,7 +116,7 @@ const RegisterForm = () => {
             {error && <p className="text-destructive text-sm">{error}</p>}
             
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Creating account...' : 'Create account'}
+              {isLoading ? 'Creating account...' : 'Create Pryv account'}
             </Button>
           </form>
         </Form>

@@ -42,7 +42,7 @@ const LoginForm = () => {
     <Card className="w-full max-w-md mx-auto">
       <CardHeader className="text-center">
         <CardTitle className="text-2xl">Welcome back</CardTitle>
-        <CardDescription>Sign in to your account</CardDescription>
+        <CardDescription>Sign in using your Pryv account</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -78,7 +78,7 @@ const LoginForm = () => {
             {error && <p className="text-destructive text-sm">{error}</p>}
             
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Signing in...' : 'Sign in'}
+              {isLoading ? 'Signing in...' : 'Sign in with Pryv'}
             </Button>
           </form>
         </Form>
