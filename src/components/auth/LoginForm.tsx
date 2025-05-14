@@ -11,7 +11,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { useAuth } from '@/context/AuthContext';
 
 const loginSchema = z.object({
-  email: z.string().email({ message: 'Please enter a valid email address' }),
+  identifier: z.string().min(1, { message: 'Please enter your email or username' }),
   password: z.string().min(6, { message: 'Password must be at least 6 characters long' }),
 });
 
@@ -24,7 +24,7 @@ const LoginForm = () => {
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: '',
+      identifier: '',
       password: '',
     },
   });
@@ -32,7 +32,7 @@ const LoginForm = () => {
   const onSubmit = async (values: LoginFormValues) => {
     try {
       setError(null);
-      await login(values.email, values.password);
+      await login(values.identifier, values.password);
     } catch (err) {
       setError('Failed to sign in. Please check your credentials.');
     }
@@ -49,12 +49,12 @@ const LoginForm = () => {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="email"
+              name="identifier"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>Email or Username</FormLabel>
                   <FormControl>
-                    <Input placeholder="your.email@example.com" {...field} />
+                    <Input placeholder="your.email@example.com or username" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

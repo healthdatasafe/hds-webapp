@@ -16,7 +16,7 @@ interface AuthContextType {
   currentUser: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (identifier: string, password: string) => Promise<void>;
   register: (email: string, username: string, password: string) => Promise<void>;
   logout: () => void;
 }
@@ -66,11 +66,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     checkAuth();
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (identifier: string, password: string) => {
     setIsLoading(true);
     try {
-      // Extract username from email for HDS 
-      const username = email.split('@')[0];
+      // Determine if identifier is an email or username
+      const isEmail = identifier.includes('@');
+      
+      // Extract username from email for HDS or use the identifier as username
+      const username = isEmail ? identifier.split('@')[0] : identifier;
+      const email = isEmail ? identifier : `${identifier}@example.com`;
       
       // Authenticate with HDS using our service
       await pryvService.authenticate();
