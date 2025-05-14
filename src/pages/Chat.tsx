@@ -29,7 +29,7 @@ const Chat = () => {
     } else if (conversations.length > 0) {
       // If no conversation is selected but we have conversations, redirect to connections
       console.log("No conversation selected, redirecting to connections");
-      navigate('/connections');
+      // navigate('/connections');
     } else {
       setIsLoading(false);
     }
