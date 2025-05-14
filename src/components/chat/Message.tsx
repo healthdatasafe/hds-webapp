@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import Avatar from '../common/Avatar';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Check } from 'lucide-react';
+import { Check, Edit } from 'lucide-react';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
@@ -36,6 +36,10 @@ const Message = ({
   const { currentUser } = useAuth();
   const { contacts, completeMessageForm } = useChat();
   const [formOpen, setFormOpen] = useState(false);
+  const [formValues, setFormValues] = useState({
+    input1: '',
+    input2: '',
+  });
   
   const isCurrentUser = currentUser?.id === senderId;
   const sender = contacts.find(contact => contact.id === senderId) || {
@@ -47,13 +51,11 @@ const Message = ({
   
   // Form handling
   const form = useForm({
-    defaultValues: {
-      input1: '',
-      input2: '',
-    },
+    defaultValues: formValues,
   });
 
   const handleFormSubmit = (values: any) => {
+    setFormValues(values); // Store the form values
     completeMessageForm(id);
     setFormOpen(false);
     toast.success("Form submitted successfully");
@@ -88,8 +90,9 @@ const Message = ({
           <div className="flex items-start">
             <div className="flex-1">{content}</div>
             {hasForm && formCompleted && (
-              <div className="ml-2 flex items-center">
+              <div className="ml-2 flex items-center cursor-pointer" onClick={handleOpenForm}>
                 <Check size={16} className="text-green-400" />
+                <Edit size={14} className="ml-1 text-gray-300 hover:text-white" />
               </div>
             )}
           </div>
@@ -102,6 +105,16 @@ const Message = ({
               className="mt-2 bg-white/10 hover:bg-white/20 text-white"
             >
               Fill Form
+            </Button>
+          )}
+          {hasForm && formCompleted && !isCurrentUser && (
+            <Button 
+              onClick={handleOpenForm}
+              variant="outline" 
+              size="sm"
+              className="mt-2 bg-transparent border-white/30 hover:bg-white/10 text-white text-xs"
+            >
+              <Edit size={12} className="mr-1" /> Edit Form
             </Button>
           )}
         </div>
@@ -121,6 +134,7 @@ const Message = ({
                 {formType === 'symptomReport' ? 'Report Symptoms' : 
                  formType === 'medicationReport' ? 'Medication Details' : 
                  'Feedback Form'}
+                {formCompleted && ' (Editing)'}
               </DialogTitle>
             </DialogHeader>
             
@@ -141,6 +155,7 @@ const Message = ({
                           {...field} 
                           className="bg-[#333] border-gray-700 text-white" 
                           placeholder="Enter details..."
+                          defaultValue={formValues.input1}
                         />
                       </FormControl>
                     </FormItem>
@@ -162,6 +177,7 @@ const Message = ({
                           {...field} 
                           className="bg-[#333] border-gray-700 text-white" 
                           placeholder="Enter details..."
+                          defaultValue={formValues.input2}
                         />
                       </FormControl>
                     </FormItem>
@@ -172,7 +188,9 @@ const Message = ({
                   <Button type="button" variant="outline" onClick={() => setFormOpen(false)}>
                     Cancel
                   </Button>
-                  <Button type="submit">Submit</Button>
+                  <Button type="submit">
+                    {formCompleted ? 'Update' : 'Submit'}
+                  </Button>
                 </div>
               </form>
             </Form>
