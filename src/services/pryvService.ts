@@ -24,7 +24,7 @@ class PryvService {
       const potentialConnection = new Pryv.Connection(apiEndpoint);
 
       // test if connection is valid 
-      const infos = await potentialConnection.accessInfo();
+      const infos: any = await potentialConnection.accessInfo();
       console.log('HDS accessInfo:', infos);
       if (infos.error) {
         throw new Error('Failed validating existing user');
