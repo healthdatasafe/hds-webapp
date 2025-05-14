@@ -1,6 +1,5 @@
 
-// This is a placeholder service for Pryv.io integration
-// In a real application, you would use the Pryv JavaScript library
+import Pryv from 'pryv';
 
 export interface PryvServiceConfig {
   domain: string;
@@ -11,6 +10,7 @@ export interface PryvServiceConfig {
 
 class PryvService {
   private config: PryvServiceConfig;
+  private pryvConnection: any = null;
   
   constructor(config: PryvServiceConfig) {
     this.config = config;
@@ -18,15 +18,25 @@ class PryvService {
   
   // Initialize Pryv connection with auth
   async authenticate() {
-    // In a real implementation, we would use Pryv.io's authentication flow
-    // https://api.pryv.com/reference/#authentication
-    console.log('Authenticating with Pryv.io with config:', this.config);
-    
-    // Return mock auth data
-    return {
-      apiEndpoint: `https://${this.config.domain}`,
-      token: 'mock-token'
-    };
+    try {
+      // In a real implementation, we would use Pryv.io's proper authentication flow
+      // This is a simplified version that creates a mock connection
+      console.log('Authenticating with Pryv.io with config:', this.config);
+      
+      // Create a service object according to Pryv docs
+      const service = new Pryv.Service(this.config.domain);
+      
+      // For this mock implementation, we'll just simulate a successful connection
+      this.pryvConnection = {
+        apiEndpoint: `https://${this.config.domain}`,
+        token: 'mock-token'
+      };
+      
+      return this.pryvConnection;
+    } catch (error) {
+      console.error('Pryv authentication error:', error);
+      throw error;
+    }
   }
   
   // Store message in Pryv

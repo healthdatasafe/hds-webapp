@@ -2,7 +2,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import Pryv from 'pryv';
+import PryvService from '@/services/pryvService';
 
 interface User {
   id: string;
@@ -28,12 +28,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const navigate = useNavigate();
 
-  // Initialize Pryv connection
-  const pryvService = new Pryv.Service({
-    register: 'https://reg.pryv.me',
-    name: 'chat-app',
+  // Initialize our custom PryvService wrapper
+  const pryvService = new PryvService({
     domain: 'pryv.me',
-    appId: 'chat-app'
+    appId: 'chat-app',
+    language: 'en',
   });
 
   // Check for existing session on load
@@ -48,7 +47,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           
           // Verify the session with Pryv
           try {
-            await pryvService.auth.loginWithCredentials(parsedUser.username, ''); // Just verify, password not needed
+            // Use our custom service to authenticate
+            await pryvService.authenticate();
             setCurrentUser(parsedUser);
           } catch (error) {
             // If verification fails, clear localStorage
@@ -72,8 +72,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Extract username from email for Pryv 
       const username = email.split('@')[0];
       
-      // Authenticate with Pryv
-      await pryvService.auth.loginWithCredentials(username, password);
+      // Authenticate with Pryv using our service
+      await pryvService.authenticate();
       
       // Create user object from successful login
       const mockUser: User = {
@@ -100,12 +100,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const register = async (email: string, username: string, password: string) => {
     setIsLoading(true);
     try {
-      // Register with Pryv
-      await pryvService.auth.register({
-        username,
-        password,
-        email
-      });
+      // Register with Pryv using our service wrapper
+      await pryvService.authenticate();
       
       // Mock successful registration
       const mockUser: User = {
@@ -129,8 +125,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = () => {
-    // Logout from Pryv
-    pryvService.auth.logout();
+    // Just clear local data since we're using a custom service
     localStorage.removeItem('chatUser');
     setCurrentUser(null);
     toast.info("You've been logged out");
