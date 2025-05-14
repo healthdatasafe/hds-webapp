@@ -1,12 +1,15 @@
+
 import React, { useEffect, useState } from 'react';
 import { useChat } from '@/context/ChatContext';
 import MessageList from '@/components/chat/MessageList';
 import MessageInput from '@/components/chat/MessageInput';
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Trash2 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import Avatar from '@/components/common/Avatar';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Separator } from '@/components/ui/separator';
 
 const Chat = () => {
   const { currentUser } = useAuth();
@@ -14,6 +17,7 @@ const Chat = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [isLoading, setIsLoading] = useState(true);
+  const [showContactDetails, setShowContactDetails] = useState(false);
   
   useEffect(() => {
     if (!currentUser) {
@@ -92,7 +96,10 @@ const Chat = () => {
           src={otherParticipant?.avatarUrl}
           className="h-10 w-10 mr-3" 
         />
-        <h2 className="text-lg font-semibold text-white">
+        <h2 
+          className="text-lg font-semibold text-white cursor-pointer"
+          onClick={() => setShowContactDetails(true)}
+        >
           {conversationName}
         </h2>
       </div>
@@ -113,6 +120,96 @@ const Chat = () => {
       )}
       
       <MessageInput />
+      
+      {/* Contact Details Dialog */}
+      <Dialog open={showContactDetails} onOpenChange={setShowContactDetails}>
+        <DialogContent className="bg-[#222] text-white border-gray-800 sm:max-w-md">
+          <div className="flex flex-col items-center mb-4">
+            <Avatar 
+              name={conversationName}
+              src={otherParticipant?.avatarUrl}
+              className="h-24 w-24 mb-4" 
+            />
+            <h2 className="text-xl font-bold">{conversationName}</h2>
+            
+            {otherParticipant?.phone && (
+              <a href={`tel:${otherParticipant.phone}`} className="text-primary underline mt-2">
+                {otherParticipant.phone}
+              </a>
+            )}
+            
+            {otherParticipant?.organization && (
+              <p className="text-primary underline mt-1">
+                {otherParticipant.organization}
+              </p>
+            )}
+          </div>
+          
+          <Separator className="my-4 bg-gray-800" />
+          
+          <h3 className="text-lg font-bold mb-3">Authorizations</h3>
+          
+          <div className="space-y-4">
+            <div className="flex justify-between">
+              <span>Chat</span>
+              <div className="space-x-3">
+                <span className="text-primary">Send</span>
+                <span className="text-primary">Receive</span>
+              </div>
+            </div>
+            
+            <div className="flex justify-between">
+              <span>Files</span>
+              <div className="space-x-3">
+                <span className="text-primary">Send</span>
+                <span className="text-primary">Receive</span>
+              </div>
+            </div>
+            
+            <div className="flex justify-between">
+              <span>Photos</span>
+              <div className="space-x-3">
+                <span className="text-primary">Send</span>
+                <span className="text-primary">Receive</span>
+              </div>
+            </div>
+          </div>
+          
+          <Separator className="my-4 bg-gray-800" />
+          
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-bold">Data Authorizations</h3>
+            <div className="bg-gray-700 rounded-full p-1">
+              <span className="text-xl">+</span>
+            </div>
+          </div>
+          
+          <div className="space-y-4 mt-3">
+            <div className="flex justify-between">
+              <span>Symptoms</span>
+              <div className="space-x-3">
+                <span className="text-primary">Add</span>
+                <span className="text-primary">Read</span>
+              </div>
+            </div>
+            
+            <div className="flex justify-between">
+              <span>Medications</span>
+              <div className="space-x-3">
+                <span className="text-primary">Add</span>
+                <span className="text-primary">Read</span>
+              </div>
+            </div>
+          </div>
+          
+          <div className="mt-6 flex justify-end">
+            <button className="flex items-center text-red-500 hover:text-red-400">
+              <Trash2 className="h-4 w-4 mr-1" />
+              Remove Connection
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
