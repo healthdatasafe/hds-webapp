@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { toast } from 'sonner';
@@ -155,8 +154,17 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [currentConversation]);
 
   const selectConversation = (conversationId: string) => {
-    const conversation = conversations.find(c => c.id === conversationId) || null;
-    setCurrentConversation(conversation);
+    console.log("ChatContext: selecting conversation", conversationId);
+    const conversation = conversations.find(c => c.id === conversationId);
+    
+    if (conversation) {
+      console.log("ChatContext: found conversation", conversation.id);
+      setCurrentConversation(conversation);
+    } else {
+      console.log("ChatContext: conversation not found", conversationId);
+      // If conversation not found, we should not navigate to chat
+      setCurrentConversation(null);
+    }
   };
 
   const startNewConversation = (contactId: string) => {

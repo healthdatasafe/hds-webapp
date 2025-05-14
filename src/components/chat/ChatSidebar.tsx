@@ -86,11 +86,8 @@ const ChatSidebar = () => {
     // Set the conversation in the context first
     selectConversation(conversationId);
     
-    // Add a short delay before navigation to ensure state is updated
-    // Using a longer delay to ensure state has time to propagate
-    setTimeout(() => {
-      navigate('/chat');
-    }, 300);
+    // Navigate immediately without timeout
+    navigate('/chat');
   };
   
   return (

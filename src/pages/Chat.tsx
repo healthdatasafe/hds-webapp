@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useChat } from '@/context/ChatContext';
 import MessageList from '@/components/chat/MessageList';
@@ -23,22 +22,17 @@ const Chat = () => {
       return;
     }
     
-    // Check if we need to redirect - use a longer timeout
-    const timer = setTimeout(() => {
-      if (!currentConversation && conversations.length > 0) {
-        console.log("No conversation selected, redirecting to connections");
-        navigate('/connections');
-      }
-      setIsLoading(false);
-    }, 800);
-    
-    // If we already have a conversation, we can stop loading immediately
+    // If we already have a conversation, we can stop loading
     if (currentConversation) {
+      console.log("Current conversation found:", currentConversation.id);
       setIsLoading(false);
-      clearTimeout(timer);
+    } else if (conversations.length > 0) {
+      // If no conversation is selected but we have conversations, redirect to connections
+      console.log("No conversation selected, redirecting to connections");
+      navigate('/connections');
+    } else {
+      setIsLoading(false);
     }
-    
-    return () => clearTimeout(timer);
   }, [currentUser, currentConversation, conversations, navigate]);
   
   // Find the other participant in a direct message
@@ -68,7 +62,7 @@ const Chat = () => {
     );
   }
   
-  // If not loading but no conversation is found after our checks
+  // If not loading but no conversation is found
   if (!currentConversation) {
     return (
       <div className="flex flex-col h-screen items-center justify-center bg-[#222]">
