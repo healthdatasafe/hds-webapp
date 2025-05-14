@@ -93,7 +93,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.setItem('chatUser', JSON.stringify(mockUser));
       setCurrentUser(mockUser);
       toast.success("Logged in successfully!");
-      navigate('/connections');
+      // navigate('/connections');
     } catch (error) {
       console.error('Login failed:', error);
       toast.error("Login failed. Please check your credentials.");
