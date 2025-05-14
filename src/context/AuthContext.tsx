@@ -6,6 +6,7 @@ import PryvService from '@/services/pryvService';
 
 interface User {
   id: string;
+  personalApiEndpoint: string;
   username: string;
   displayName: string;
   email: string;
@@ -30,7 +31,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Initialize our custom PryvService wrapper
   const pryvService = new PryvService({
-    domain: 'pryv.me',
+    pryvServiceInfo: 'https://demo.datsafe.dev/reg/service/info',
     appId: 'health-data-safe',
     language: 'en',
   });
@@ -48,7 +49,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           // Verify the session with HDS
           try {
             // Use our custom service to authenticate
-            await pryvService.authenticate();
+            await pryvService.authenticateWithEndpoint(parsedUser.personalApiEndpoint);
             setCurrentUser(parsedUser);
           } catch (error) {
             // If verification fails, clear localStorage
@@ -77,11 +78,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const email = isEmail ? identifier : `${identifier}@example.com`;
       
       // Authenticate with HDS using our service
-      await pryvService.authenticate();
+      const personalConnection = await pryvService.authenticate(username, password);
       
       // Create user object from successful login
       const mockUser: User = {
         id: 'user_' + Math.random().toString(36).substr(2, 9),
+        personalApiEndpoint: personalConnection.apiEndpoint();
         username,
         displayName: username,
         email,
