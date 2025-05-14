@@ -1,5 +1,5 @@
 
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
 import { useAuth } from './AuthContext';
 import { toast } from 'sonner';
 import { 
@@ -17,6 +17,7 @@ import {
 export const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // Get auth context inside the component function, not at the module level
   const { currentUser } = useAuth();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [currentConversation, setCurrentConversation] = useState<Conversation | null>(null);
@@ -222,3 +223,10 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;
 };
 
+export const useChat = (): ChatContextType => {
+  const context = useContext(ChatContext);
+  if (context === undefined) {
+    throw new Error('useChat must be used within a ChatProvider');
+  }
+  return context;
+};

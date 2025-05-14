@@ -15,6 +15,7 @@ import Tasks from "./pages/Tasks";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import { AuthProvider } from "./context/AuthContext";
+import { ChatProvider } from "./context/ChatContext";
 import BottomNav from "./components/navigation/BottomNav";
 
 const queryClient = new QueryClient();
