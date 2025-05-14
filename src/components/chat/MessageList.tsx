@@ -3,6 +3,7 @@ import React, { useEffect, useRef } from 'react';
 import { useChat } from '@/context/ChatContext';
 import Message from './Message';
 import { Skeleton } from '@/components/ui/skeleton';
+import Avatar from '../common/Avatar';
 
 const MessageList = () => {
   const { messages, isLoadingMessages, currentConversation, contacts } = useChat();
