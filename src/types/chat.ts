@@ -34,6 +34,9 @@ export interface Contact {
   status?: 'online' | 'offline' | 'away';
   accessInfo?: any;
   permissions?: Permission[];
+  type?: string;
+  phone?: string;
+  organization?: string;
 }
 
 export interface ChatContextType {

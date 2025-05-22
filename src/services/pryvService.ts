@@ -82,25 +82,42 @@ class PryvService {
 
   // Get the conversation list
   async getContacts() {
-    const accessesApiCall = {
-      method: 'accesses.get',
-      params: {}
+    try {
+      // Type the API call properly for TypeScript
+      const accessesApiCall: any = {
+        method: 'accesses.get',
+        params: {}
+      };
+      
+      const res = await this.pryvConnection.api([accessesApiCall]);
+      if (res[0].error) {
+        throw new Error(res[0].error.toString());
+      }
+      
+      const accesses = res[0]?.accesses;
+      console.log(accesses);
+      
+      // Map to our Contact interface
+      const contacts = accesses.map((a: any) => ({
+        id: a.id,
+        username: a.name,
+        displayName: a.name,
+        type: a.type,
+        status: 'online' as 'online' | 'offline' | 'away', // Cast to the union type
+        accessInfo: a,
+        // Map permissions from access if they exist
+        permissions: a.permissions?.map((p: any) => ({
+          name: p.streamId || 'Unknown',
+          category: p.level.includes('read') ? 'data' : 'communication',
+          actions: [p.level]
+        }))
+      }));
+      
+      return contacts;
+    } catch (error) {
+      console.error('Failed to fetch contacts:', error);
+      throw error;
     }
-    const res = await this.pryvConnection.api([accessesApiCall]);
-    if (res[0].error) {
-      throw new Error(res[0].error);
-    }
-    const accesses = res[0]?.accesses;
-    console.log(accesses);
-    const contacts = accesses.map((a) => ({
-      id: a.id,
-      username: a.name,
-      type: a.type,
-      displayName: a.name,
-      accessInfo: a,
-      status: 'online'
-    }));
-    return contacts;
   }
 }
 

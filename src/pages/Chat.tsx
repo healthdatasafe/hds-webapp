@@ -1,14 +1,14 @@
+
 import React, { useEffect, useState } from 'react';
 import { useChat } from '@/hooks/useChat';
 import MessageList from '@/components/chat/MessageList';
 import MessageInput from '@/components/chat/MessageInput';
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, Trash2 } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import Avatar from '@/components/common/Avatar';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { Separator } from '@/components/ui/separator';
+import ContactDetailsDialog from '@/components/chat/ContactDetailsDialog';
 
 const Chat = () => {
   const { currentUser } = useAuth();
@@ -51,8 +51,6 @@ const Chat = () => {
   const otherParticipant = getOtherParticipant();
   const conversationName = currentConversation?.name || otherParticipant?.displayName || 'Unknown';
 
-  const textDescription = otherParticipant?.accessInfo.clientData?.['app-web-auth:description']?.content;
-
   // Show loading state during initialization
   if (isLoading) {
     return (
@@ -84,40 +82,6 @@ const Chat = () => {
       </div>
     );
   }
-  
-  // Helper function to render the permissions section
-  const renderPermissions = () => {
-    if (!otherParticipant || !otherParticipant.accessInfo?.permissions) {
-      console.log(otherParticipant);
-      return (
-        <div className="space-y-4">
-          <div className="flex justify-between">
-            <span>No permissions available</span>
-          </div>
-        </div>
-      );
-    }
-
-    return (
-      <>
-        {otherParticipant.accessInfo.permissions.length > 0 && (
-          <div className="space-y-4">
-            <h3 className="text-lg font-bold mb-3">Permissions</h3>
-            {otherParticipant.accessInfo.permissions.map((permission, index) => (
-              <div key={`comm-${index}`} className="flex justify-between">
-                <span>{permission.streamId}</span>
-                <div className="space-x-3">
-                  <span key={`level-${index}`} className="text-primary">
-                    {permission.level}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </>
-    );
-  };
   
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-[#222]">
@@ -157,43 +121,11 @@ const Chat = () => {
       <MessageInput />
       
       {/* Contact Details Dialog */}
-      <Dialog open={showContactDetails} onOpenChange={setShowContactDetails}>
-        <DialogContent className="bg-[#222] text-white border-gray-800 sm:max-w-md">
-          <DialogTitle className="sr-only">Contact Details</DialogTitle>
-          <div className="flex flex-col items-center mb-4">
-            <Avatar 
-              name={conversationName}
-              src={otherParticipant?.avatarUrl}
-              className="h-24 w-24 mb-4" 
-            />
-            <h2 className="text-xl font-bold">{conversationName}</h2>
-            
-            
-            {otherParticipant?.accessInfo.type && (
-              <p className="text-muted-foreground mt-1">
-                Type: {otherParticipant.accessInfo.type}
-              </p>
-            )}
-
-            {textDescription && (
-              <p className="text-white mt-1">
-                {textDescription}
-              </p>
-            )}
-          </div>
-          
-          <Separator className="my-4 bg-gray-800" />
-          
-          {renderPermissions()}
-          
-          <div className="mt-6 flex justify-end">
-            <button className="flex items-center text-red-500 hover:text-red-400">
-              <Trash2 className="h-4 w-4 mr-1" />
-              Remove Connection
-            </button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <ContactDetailsDialog 
+        open={showContactDetails}
+        onOpenChange={setShowContactDetails}
+        contact={otherParticipant}
+      />
     </div>
   );
 };
