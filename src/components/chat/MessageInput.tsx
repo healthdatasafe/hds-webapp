@@ -4,11 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useChat } from '@/hooks/useChat';
 import { ArrowUp, Plus, Mic } from 'lucide-react';
+import { useTranslation } from '@/context/TranslationContext';
 
 const MessageInput = () => {
   const [message, setMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
   const { sendMessage, currentConversation } = useChat();
+  const { t } = useTranslation();
   
   const handleSubmit = async () => {
     if (!message.trim() || isSending || !currentConversation) return;
@@ -42,13 +44,12 @@ const MessageInput = () => {
           <Plus className="h-6 w-6" />
         </Button>
         <Textarea
-          placeholder="Type a message..."
+          placeholder={t('message.typeMessage')}
           value={message}
           onChange={e => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
           disabled={!currentConversation || isSending}
           className="min-h-[48px] resize-none border-0 bg-transparent focus-visible:ring-0 text-white py-3"
-          // Removing maxRows which was causing the error
         />
         {message.trim() ? (
           <Button 

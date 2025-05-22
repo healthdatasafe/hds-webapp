@@ -1,6 +1,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { useChat } from '@/hooks/useChat';
+import { useTranslation } from '@/context/TranslationContext';
 import Message from './Message';
 import { Skeleton } from '@/components/ui/skeleton';
 import Avatar from '../common/Avatar';
@@ -11,6 +12,7 @@ interface MessageListProps {
 
 const MessageList = ({ hideHeader = false }: MessageListProps) => {
   const { messages, isLoadingMessages, currentConversation, contacts } = useChat();
+  const { t } = useTranslation();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   // Scroll to bottom when messages change
@@ -50,7 +52,7 @@ const MessageList = ({ hideHeader = false }: MessageListProps) => {
   if (messages.length === 0) {
     return (
       <div className="flex h-full items-center justify-center text-muted-foreground">
-        <p>No messages yet. Start a conversation!</p>
+        <p>{t('message.noMessages')}</p>
       </div>
     );
   }

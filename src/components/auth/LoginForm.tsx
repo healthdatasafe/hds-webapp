@@ -9,17 +9,19 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { useAuth } from '@/context/AuthContext';
-
-const loginSchema = z.object({
-  identifier: z.string().min(1, { message: 'Please enter your email or username' }),
-  password: z.string().min(6, { message: 'Password must be at least 6 characters long' }),
-});
-
-type LoginFormValues = z.infer<typeof loginSchema>;
+import { useTranslation } from '@/context/TranslationContext';
 
 const LoginForm = () => {
   const { login, isLoading } = useAuth();
+  const { t } = useTranslation();
   const [error, setError] = useState<string | null>(null);
+
+  const loginSchema = z.object({
+    identifier: z.string().min(1, { message: 'Please enter your email or username' }),
+    password: z.string().min(6, { message: 'Password must be at least 6 characters long' }),
+  });
+
+  type LoginFormValues = z.infer<typeof loginSchema>;
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -34,15 +36,15 @@ const LoginForm = () => {
       setError(null);
       await login(values.identifier, values.password);
     } catch (err) {
-      setError('Failed to sign in. Please check your credentials.');
+      setError(t('auth.errorLogin'));
     }
   };
 
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Welcome back</CardTitle>
-        <CardDescription>Sign in using your HDS account</CardDescription>
+        <CardTitle className="text-2xl">{t('auth.welcomeBack')}</CardTitle>
+        <CardDescription>{t('auth.signInWith')}</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -52,7 +54,7 @@ const LoginForm = () => {
               name="identifier"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email or Username</FormLabel>
+                  <FormLabel>{t('auth.emailOrUsername')}</FormLabel>
                   <FormControl>
                     <Input placeholder="your.email@example.com or username" {...field} />
                   </FormControl>
@@ -66,7 +68,7 @@ const LoginForm = () => {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>{t('auth.password')}</FormLabel>
                   <FormControl>
                     <Input type="password" placeholder="******" {...field} />
                   </FormControl>
@@ -78,16 +80,16 @@ const LoginForm = () => {
             {error && <p className="text-destructive text-sm">{error}</p>}
             
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Signing in...' : 'Sign in with HDS'}
+              {isLoading ? t('misc.loading') : t('auth.login')}
             </Button>
           </form>
         </Form>
       </CardContent>
       <CardFooter className="flex justify-center">
         <p className="text-sm text-muted-foreground">
-          Don't have an account?{' '}
+          {t('auth.dontHaveAccount')}{' '}
           <Link to="/register" className="text-primary hover:underline">
-            Create account
+            {t('auth.register')}
           </Link>
         </p>
       </CardFooter>

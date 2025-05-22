@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useChat } from '@/hooks/useChat';
 import { useAuth } from '@/context/AuthContext';
+import { useTranslation } from '@/context/TranslationContext';
 import Avatar from '../common/Avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,6 +19,7 @@ import { useNavigate } from 'react-router-dom';
 const ChatSidebar = () => {
   const { conversations, contacts, selectConversation, currentConversation } = useChat();
   const { currentUser, logout } = useAuth();
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [view, setView] = useState<'conversations' | 'contacts'>('conversations');
   const navigate = useNavigate();
@@ -95,10 +97,10 @@ const ChatSidebar = () => {
     <div className="flex flex-col h-full bg-[#1a1a1a] text-white">
       {/* Header with title and add button */}
       <div className="p-4 border-b border-gray-800 flex items-center justify-between">
-        <h1 className="text-xl font-bold">Connections</h1>
+        <h1 className="text-xl font-bold">{t('nav.connections')}</h1>
         <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full bg-red-600 hover:bg-red-700 text-white">
           <Plus className="h-5 w-5" />
-          <span className="sr-only">Add Connection</span>
+          <span className="sr-only">{t('connections.add')}</span>
         </Button>
       </div>
       
@@ -107,7 +109,7 @@ const ChatSidebar = () => {
         <div className="relative bg-[#333333] rounded-md">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" />
           <Input
-            placeholder="Search..."
+            placeholder={t('connections.search')}
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             className="pl-9 bg-transparent border-0 text-white placeholder:text-gray-400 focus-visible:ring-0"

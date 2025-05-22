@@ -1,59 +1,75 @@
 
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Book, ListTodo, Users, Settings } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { MessageSquare, Users, BookOpen, CheckSquare, Settings } from 'lucide-react';
+import { useTranslation } from '@/context/TranslationContext';
+import { useAuth } from '@/context/AuthContext';
 
 const BottomNav = () => {
+  const navigate = useNavigate();
   const location = useLocation();
-  const isActive = (path: string) => location.pathname.includes(path);
-  const isChatRoute = location.pathname === '/chat';
+  const { t } = useTranslation();
+  const { currentUser } = useAuth();
 
-  // Hide the bottom navigation on the chat page
-  if (isChatRoute) {
+  // If the user is not logged in, don't show the navigation
+  if (!currentUser) {
+    return null;
+  }
+  
+  // Only show on app routes, not on auth routes
+  if (location.pathname === '/' || 
+      location.pathname === '/login' || 
+      location.pathname === '/register') {
     return null;
   }
 
   const navItems = [
     {
-      name: 'Diary',
-      path: '/diary',
-      icon: Book,
+      name: t('nav.chat'),
+      icon: MessageSquare,
+      path: '/chat',
     },
     {
-      name: 'Tasks',
-      path: '/tasks',
-      icon: ListTodo,
-    },
-    {
-      name: 'Connections',
-      path: '/connections',
+      name: t('nav.connections'),
       icon: Users,
+      path: '/connections',
     },
     {
-      name: 'Settings',
-      path: '/settings',
+      name: t('nav.diary'),
+      icon: BookOpen,
+      path: '/diary',
+    },
+    {
+      name: t('nav.tasks'),
+      icon: CheckSquare,
+      path: '/tasks',
+    },
+    {
+      name: t('nav.settings'),
       icon: Settings,
+      path: '/settings',
     },
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 border-t bg-background z-50 pb-safe">
-      <div className="flex justify-around">
-        {navItems.map((item) => (
-          <Link
-            key={item.name}
-            to={item.path}
+    <div className="fixed bottom-0 left-0 right-0 h-16 bg-[#111] border-t border-gray-800 text-white flex justify-around pb-safe">
+      {navItems.map((item) => {
+        const isActive = location.pathname === item.path;
+        return (
+          <button
+            key={item.path}
+            onClick={() => navigate(item.path)}
             className={cn(
-              "flex flex-col items-center py-3 px-4 text-xs",
-              isActive(item.path) ? "text-primary font-medium" : "text-muted-foreground"
+              'flex flex-1 flex-col items-center justify-center h-full',
+              isActive ? 'text-red-500' : 'text-gray-400'
             )}
           >
-            <item.icon className="h-6 w-6 mb-1" />
-            <span>{item.name}</span>
-          </Link>
-        ))}
-      </div>
+            <item.icon className="h-5 w-5" />
+            <span className="text-xs mt-0.5">{item.name}</span>
+          </button>
+        );
+      })}
     </div>
   );
 };
