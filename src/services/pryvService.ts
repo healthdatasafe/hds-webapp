@@ -1,5 +1,6 @@
 
-import Pryv, { Connection, Service } from 'pryv';
+import 'https://pryv.github.io/lib-js/pryv-socket.io-monitor.js';
+
 
 export interface PryvServiceConfig {
   serviceInfoUrl: string;
@@ -12,10 +13,33 @@ class PryvService {
   private config: PryvServiceConfig;
   private pryvConnection: Connection = null;
   private service: Service = null;
+  private monitor: any = null;
+  events = [];
   
   constructor(config: PryvServiceConfig) {
     this.config = config;
     this.service = new Pryv.Service(this.config.serviceInfoUrl);
+  }
+
+  async newEvent(event) {
+    console.log(event);
+    this.events.push(event);
+  }
+
+  private async setMonitor() {
+    if (this.monitor) this.monitor.stop();
+    if (!this.pryvConnection) return;
+    const eventsGetScope = {};
+
+   // await this.pryvConnection.getEventsStreamed(eventsGetScope, this.newEvent.bind(this))
+    
+    this.monitor = new Pryv.Monitor(this.pryvConnection, eventsGetScope)
+      .on('event', (event) => { this.newEvent(event); }) // event created or updated
+      .on('streams', (streams) => { console.log('s >> ', streams)}) // streams structure changed
+      .on('eventDelete', (event) => { console.log('d >> ', event)}) // event deleted
+      .addUpdateMethod(new Pryv.Monitor.UpdateMethod.Socket()); // set refresh timer
+
+    await this.monitor.start();
   }
 
   // authenticate with an existing api endpoint
@@ -31,6 +55,7 @@ class PryvService {
       }
       this.pryvConnection = potentialConnection;
       console.log('Authicated with existing apiEndpoint');
+      this.setMonitor();
       return this.pryvConnection;
     } catch (error) {
       console.error('HDS authentication error:', error);
@@ -51,7 +76,7 @@ class PryvService {
       
       // Create a service object according to HDS docs
       this.pryvConnection = await this.service.login(username, password, this.config.appId);
-      
+      this.setMonitor();
       return this.pryvConnection;
     } catch (error) {
       console.error('HDS authentication error:', error);
@@ -119,6 +144,8 @@ class PryvService {
       throw error;
     }
   }
+
+  
 }
 
 export default PryvService;
