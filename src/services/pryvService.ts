@@ -1,6 +1,14 @@
 
 import 'https://pryv.github.io/lib-js/pryv-socket.io-monitor.js';
 
+// Add a declaration for the Pryv global variable to fix TypeScript errors
+declare global {
+  interface Window {
+    Pryv: any;
+  }
+  const Pryv: any;
+}
+
 export interface PryvServiceConfig {
   serviceInfoUrl: string;
   appId: string;

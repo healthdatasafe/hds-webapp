@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import BottomNav from '@/components/navigation/BottomNav';
@@ -26,6 +26,7 @@ const Diary = () => {
   const { currentUser } = useAuth();
   const [events, setEvents] = useState<PryvEvent[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const bottomRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
     const loadEvents = async () => {
@@ -45,8 +46,14 @@ const Diary = () => {
         // Wait a moment for events to potentially load via the monitor
         setTimeout(() => {
           console.log('Events from pryvService:', pryvService.events);
-          setEvents(pryvService.events);
+          // Sort events by time in ascending order (oldest to newest)
+          const sortedEvents = [...pryvService.events].sort((a, b) => a.time - b.time);
+          setEvents(sortedEvents);
           setLoading(false);
+          // Scroll to bottom to show latest events
+          setTimeout(() => {
+            bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+          }, 100);
         }, 1000);
       } catch (error) {
         console.error('Failed to load events:', error);
@@ -138,6 +145,7 @@ const Diary = () => {
                 </CardContent>
               </Card>
             ))}
+            <div ref={bottomRef} className="h-2" /> {/* Bottom reference element */}
           </div>
         ) : (
           <div className="text-center py-10 border border-dashed border-gray-700 rounded-lg">
