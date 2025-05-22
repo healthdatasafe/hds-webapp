@@ -10,5 +10,5 @@ declare module 'vite-plugin-backloop.dev' {
     verbose?: boolean;
   }
   
-  export default function backloopDev(): Plugin;
+  export default function backloopDev(options?: BackloopOptions): Plugin;
 }

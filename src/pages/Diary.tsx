@@ -7,6 +7,7 @@ import { useAuth } from '@/context/AuthContext';
 import PryvService from '@/services/pryvService';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatDistance } from 'date-fns';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 // Interface for Pryv events
 interface PryvEvent {
@@ -28,6 +29,19 @@ const Diary = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const bottomRef = useRef<HTMLDivElement>(null);
   const pryvServiceRef = useRef<PryvService | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [shouldAutoScroll, setShouldAutoScroll] = useState<boolean>(true);
+  const prevEventsLengthRef = useRef<number>(0);
+  
+  // Handle scroll events to determine if we should auto-scroll
+  const handleScroll = () => {
+    if (!containerRef.current) return;
+    
+    const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
+    // Consider "near bottom" to be within 100px of the bottom
+    const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
+    setShouldAutoScroll(isNearBottom);
+  };
   
   useEffect(() => {
     const loadEvents = async () => {
@@ -52,6 +66,17 @@ const Diary = () => {
           if (pryvServiceRef.current) {
             // Sort events by time in ascending order (oldest to newest)
             const sortedEvents = [...pryvServiceRef.current.events].sort((a, b) => a.time - b.time);
+            
+            // If we have new events and should auto-scroll
+            if (sortedEvents.length > prevEventsLengthRef.current && shouldAutoScroll) {
+              // Set timeout to allow React to render new events before scrolling
+              setTimeout(() => {
+                bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+              }, 100);
+            }
+            
+            // Update previous length reference
+            prevEventsLengthRef.current = sortedEvents.length;
             setEvents(sortedEvents);
           }
         };
@@ -60,7 +85,7 @@ const Diary = () => {
         updateEvents();
         setLoading(false);
         
-        // Scroll to bottom to show latest events
+        // Initial scroll to bottom
         setTimeout(() => {
           bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
         }, 100);
@@ -128,7 +153,11 @@ const Diary = () => {
   
   return (
     <div className="flex flex-col h-screen bg-background">
-      <div className="flex-1 p-4 pb-16 overflow-auto">
+      <div 
+        className="flex-1 p-4 pb-16 overflow-auto" 
+        ref={containerRef}
+        onScroll={handleScroll}
+      >
         <h1 className="text-2xl font-bold mb-4">Diary</h1>
         
         {loading ? (
