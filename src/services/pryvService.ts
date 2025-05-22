@@ -91,10 +91,13 @@ class PryvService {
       throw new Error(res[0].error);
     }
     const accesses = res[0]?.accesses;
+    console.log(accesses);
     const contacts = accesses.map((a) => ({
       id: a.id,
-      username: a.user.username,
-      displayName: a.user.username,
+      username: a.name,
+      type: a.type,
+      displayName: a.name,
+      accessInfo: a,
       status: 'online',
       phone: '+1 (555) 987-6543',
       organization: 'City Medical Center'
