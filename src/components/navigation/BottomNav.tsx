@@ -2,7 +2,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { MessageSquare, Users, BookOpen, CheckSquare, Settings } from 'lucide-react';
+import { Users, BookOpen, CheckSquare, Settings } from 'lucide-react';
 import { useTranslation } from '@/context/TranslationContext';
 import { useAuth } from '@/context/AuthContext';
 
@@ -25,11 +25,6 @@ const BottomNav = () => {
   }
 
   const navItems = [
-    {
-      name: t('nav.chat'),
-      icon: MessageSquare,
-      path: '/chat',
-    },
     {
       name: t('nav.connections'),
       icon: Users,
