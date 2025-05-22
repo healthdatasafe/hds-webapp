@@ -1,7 +1,6 @@
 
 import 'https://pryv.github.io/lib-js/pryv-socket.io-monitor.js';
 
-
 export interface PryvServiceConfig {
   serviceInfoUrl: string;
   appId: string;
@@ -11,19 +10,27 @@ export interface PryvServiceConfig {
 
 class PryvService {
   private config: PryvServiceConfig;
-  private pryvConnection: Connection = null;
-  private service: Service = null;
+  private pryvConnection: any = null; // Using any to avoid TypeScript errors
+  private service: any = null;
   private monitor: any = null;
-  events = [];
+  events: any[] = [];
   
   constructor(config: PryvServiceConfig) {
     this.config = config;
     this.service = new Pryv.Service(this.config.serviceInfoUrl);
   }
 
-  async newEvent(event) {
-    console.log(event);
-    this.events.push(event);
+  async newEvent(event: any) {
+    console.log('New event received:', event);
+    // Check if the event already exists in the array
+    const existingIndex = this.events.findIndex(e => e.id === event.id);
+    if (existingIndex >= 0) {
+      // Update existing event
+      this.events[existingIndex] = event;
+    } else {
+      // Add new event
+      this.events.push(event);
+    }
   }
 
   private async setMonitor() {
@@ -31,12 +38,28 @@ class PryvService {
     if (!this.pryvConnection) return;
     const eventsGetScope = {};
 
-   // await this.pryvConnection.getEventsStreamed(eventsGetScope, this.newEvent.bind(this))
+    // First, try to get existing events
+    try {
+      const result = await this.pryvConnection.api([{
+        method: 'events.get',
+        params: {}
+      }]);
+      
+      if (result[0] && !result[0].error && result[0].events) {
+        result[0].events.forEach((event: any) => this.newEvent(event));
+      }
+    } catch (error) {
+      console.error('Error fetching initial events:', error);
+    }
     
     this.monitor = new Pryv.Monitor(this.pryvConnection, eventsGetScope)
-      .on('event', (event) => { this.newEvent(event); }) // event created or updated
-      .on('streams', (streams) => { console.log('s >> ', streams)}) // streams structure changed
-      .on('eventDelete', (event) => { console.log('d >> ', event)}) // event deleted
+      .on('event', (event: any) => { this.newEvent(event); }) // event created or updated
+      .on('streams', (streams: any) => { console.log('Streams updated:', streams)}) // streams structure changed
+      .on('eventDelete', (event: any) => { 
+        console.log('Event deleted:', event);
+        // Remove the event from our array
+        this.events = this.events.filter(e => e.id !== event.id);
+      }) 
       .addUpdateMethod(new Pryv.Monitor.UpdateMethod.Socket()); // set refresh timer
 
     await this.monitor.start();
@@ -54,8 +77,8 @@ class PryvService {
         throw new Error('Failed validating existing user');
       }
       this.pryvConnection = potentialConnection;
-      console.log('Authicated with existing apiEndpoint');
-      this.setMonitor();
+      console.log('Authenticated with existing apiEndpoint');
+      await this.setMonitor();
       return this.pryvConnection;
     } catch (error) {
       console.error('HDS authentication error:', error);
@@ -76,7 +99,7 @@ class PryvService {
       
       // Create a service object according to HDS docs
       this.pryvConnection = await this.service.login(username, password, this.config.appId);
-      this.setMonitor();
+      await this.setMonitor();
       return this.pryvConnection;
     } catch (error) {
       console.error('HDS authentication error:', error);
@@ -144,8 +167,6 @@ class PryvService {
       throw error;
     }
   }
-
-  
 }
 
 export default PryvService;
