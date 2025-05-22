@@ -27,6 +27,7 @@ const Diary = () => {
   const [events, setEvents] = useState<PryvEvent[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const pryvServiceRef = useRef<PryvService | null>(null);
   
   useEffect(() => {
     const loadEvents = async () => {
@@ -40,21 +41,37 @@ const Diary = () => {
           language: 'en',
         });
         
+        // Store the pryvService reference for later use
+        pryvServiceRef.current = pryvService;
+        
         // Authenticate with the stored endpoint
         await pryvService.authenticateWithEndpoint(currentUser.personalApiEndpoint);
         
-        // Wait a moment for events to potentially load via the monitor
+        // Set up interval to check for updates
+        const updateEvents = () => {
+          if (pryvServiceRef.current) {
+            // Sort events by time in ascending order (oldest to newest)
+            const sortedEvents = [...pryvServiceRef.current.events].sort((a, b) => a.time - b.time);
+            setEvents(sortedEvents);
+          }
+        };
+        
+        // Initial load
+        updateEvents();
+        setLoading(false);
+        
+        // Scroll to bottom to show latest events
         setTimeout(() => {
-          console.log('Events from pryvService:', pryvService.events);
-          // Sort events by time in ascending order (oldest to newest)
-          const sortedEvents = [...pryvService.events].sort((a, b) => a.time - b.time);
-          setEvents(sortedEvents);
-          setLoading(false);
-          // Scroll to bottom to show latest events
-          setTimeout(() => {
-            bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-          }, 100);
-        }, 1000);
+          bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+        
+        // Set up polling for updates
+        const intervalId = setInterval(updateEvents, 1000);
+        
+        // Clean up function
+        return () => {
+          clearInterval(intervalId);
+        };
       } catch (error) {
         console.error('Failed to load events:', error);
         setLoading(false);
