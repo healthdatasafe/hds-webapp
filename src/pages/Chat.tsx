@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useChat } from '@/hooks/useChat';
 import MessageList from '@/components/chat/MessageList';
@@ -84,6 +83,78 @@ const Chat = () => {
     );
   }
   
+  // Helper function to render the permissions section
+  const renderPermissions = () => {
+    if (!otherParticipant || !otherParticipant.permissions) {
+      return (
+        <div className="space-y-4">
+          <div className="flex justify-between">
+            <span>No permissions available</span>
+          </div>
+        </div>
+      );
+    }
+
+    // Group permissions by category
+    const communicationPermissions = otherParticipant.permissions.filter(
+      perm => perm.category === 'communication'
+    );
+    
+    const dataPermissions = otherParticipant.permissions.filter(
+      perm => perm.category === 'data'
+    );
+
+    return (
+      <>
+        {communicationPermissions.length > 0 && (
+          <div className="space-y-4">
+            <h3 className="text-lg font-bold mb-3">Authorizations</h3>
+            {communicationPermissions.map((permission, index) => (
+              <div key={`comm-${index}`} className="flex justify-between">
+                <span>{permission.name}</span>
+                <div className="space-x-3">
+                  {permission.actions.map((action, actionIndex) => (
+                    <span key={`action-${index}-${actionIndex}`} className="text-primary">
+                      {action}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        
+        {dataPermissions.length > 0 && (
+          <>
+            <Separator className="my-4 bg-gray-800" />
+            
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-bold">Data Authorizations</h3>
+              <div className="bg-gray-700 rounded-full p-1 cursor-pointer">
+                <span className="text-xl">+</span>
+              </div>
+            </div>
+            
+            <div className="space-y-4 mt-3">
+              {dataPermissions.map((permission, index) => (
+                <div key={`data-${index}`} className="flex justify-between">
+                  <span>{permission.name}</span>
+                  <div className="space-x-3">
+                    {permission.actions.map((action, actionIndex) => (
+                      <span key={`action-${index}-${actionIndex}`} className="text-primary">
+                        {action}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </>
+    );
+  };
+  
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-[#222]">
       {/* Header with back button and contact name */}
@@ -140,7 +211,7 @@ const Chat = () => {
             )}
             
             {otherParticipant?.organization && (
-              <p className="text-primary underline mt-1">
+              <p className="text-muted-foreground mt-1">
                 {otherParticipant.organization}
               </p>
             )}
@@ -148,60 +219,7 @@ const Chat = () => {
           
           <Separator className="my-4 bg-gray-800" />
           
-          <h3 className="text-lg font-bold mb-3">Authorizations</h3>
-          
-          <div className="space-y-4">
-            <div className="flex justify-between">
-              <span>Chat</span>
-              <div className="space-x-3">
-                <span className="text-primary">Send</span>
-                <span className="text-primary">Receive</span>
-              </div>
-            </div>
-            
-            <div className="flex justify-between">
-              <span>Files</span>
-              <div className="space-x-3">
-                <span className="text-primary">Send</span>
-                <span className="text-primary">Receive</span>
-              </div>
-            </div>
-            
-            <div className="flex justify-between">
-              <span>Photos</span>
-              <div className="space-x-3">
-                <span className="text-primary">Send</span>
-                <span className="text-primary">Receive</span>
-              </div>
-            </div>
-          </div>
-          
-          <Separator className="my-4 bg-gray-800" />
-          
-          <div className="flex justify-between items-center">
-            <h3 className="text-lg font-bold">Data Authorizations</h3>
-            <div className="bg-gray-700 rounded-full p-1">
-              <span className="text-xl">+</span>
-            </div>
-          </div>
-          
-          <div className="space-y-4 mt-3">
-            <div className="flex justify-between">
-              <span>Symptoms</span>
-              <div className="space-x-3">
-                <span className="text-primary">Add</span>
-                <span className="text-primary">Read</span>
-              </div>
-            </div>
-            
-            <div className="flex justify-between">
-              <span>Medications</span>
-              <div className="space-x-3">
-                <span className="text-primary">Add</span>
-                <span className="text-primary">Read</span>
-              </div>
-            </div>
-          </div>
+          {renderPermissions()}
           
           <div className="mt-6 flex justify-end">
             <button className="flex items-center text-red-500 hover:text-red-400">

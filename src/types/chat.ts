@@ -20,6 +20,12 @@ export interface Conversation {
   unreadCount: number;
 }
 
+export interface Permission {
+  name: string;
+  category: 'communication' | 'data' | 'other';
+  actions: string[];
+}
+
 export interface Contact {
   id: string;
   username: string;
@@ -28,6 +34,7 @@ export interface Contact {
   status?: 'online' | 'offline' | 'away';
   phone?: string;
   organization?: string;
+  permissions?: Permission[];
 }
 
 export interface ChatContextType {
