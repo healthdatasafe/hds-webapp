@@ -1,5 +1,5 @@
 
-import Pryv from 'pryv';
+import Pryv, { Connection, Service } from 'pryv';
 
 export interface PryvServiceConfig {
   serviceInfoUrl: string;
@@ -10,8 +10,8 @@ export interface PryvServiceConfig {
 
 class PryvService {
   private config: PryvServiceConfig;
-  private pryvConnection: any = null;
-  private service: any = null;
+  private pryvConnection: Connection = null;
+  private service: Service = null;
   
   constructor(config: PryvServiceConfig) {
     this.config = config;
@@ -78,6 +78,28 @@ class PryvService {
     
     // Return mock messages
     return [];
+  }
+
+  // Get the conversation list
+  async getContacts() {
+    const accessesApiCall = {
+      method: 'accesses.get',
+      params: {}
+    }
+    const res = await this.pryvConnection.api([accessesApiCall]);
+    if (res[0].error) {
+      throw new Error(res[0].error);
+    }
+    const accesses = res[0]?.accesses;
+    const contacts = accesses.map((a) => ({
+      id: a.id,
+      username: a.user.username,
+      displayName: a.user.username,
+      status: 'online',
+      phone: '+1 (555) 987-6543',
+      organization: 'City Medical Center'
+    }));
+    return contacts;
   }
 }
 
