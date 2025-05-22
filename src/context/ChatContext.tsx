@@ -8,11 +8,8 @@ import {
   Contact, 
   Message 
 } from '@/types/chat';
-import { 
-  generateMockContacts, 
-  generateMockConversations, 
-  generateMockMessages 
-} from '@/data/mockChatData';
+import { generateMockMessages } from '@/data/mockChatData';
+import PryvService from '@/services/pryvService';
 
 export const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
@@ -24,22 +21,65 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [messages, setMessages] = useState<Message[]>([]);
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+  const [pryvService, setPryvService] = useState<PryvService | null>(null);
 
-  // Initialize with mock data when user is authenticated
+  // Initialize Pryv service when user is authenticated
   useEffect(() => {
     if (currentUser) {
-      const mockContacts = generateMockContacts(currentUser.id);
-      setContacts(mockContacts);
+      const service = new PryvService({
+        serviceInfoUrl: 'https://demo.datasafe.dev/reg/service/info',
+        appId: 'health-data-safe',
+        language: 'en',
+      });
       
-      const mockConversations = generateMockConversations(currentUser.id, mockContacts);
-      setConversations(mockConversations);
+      // Authenticate with the stored endpoint
+      service.authenticateWithEndpoint(currentUser.personalApiEndpoint)
+        .then(() => {
+          setPryvService(service);
+        })
+        .catch(err => {
+          console.error('Failed to authenticate with Pryv:', err);
+          toast.error('Failed to connect to your data service');
+        });
     } else {
-      setContacts([]);
-      setConversations([]);
-      setCurrentConversation(null);
-      setMessages([]);
+      setPryvService(null);
     }
   }, [currentUser]);
+
+  // Fetch real contacts when pryvService is available
+  useEffect(() => {
+    const fetchContacts = async () => {
+      if (pryvService && currentUser) {
+        try {
+          const realContacts = await pryvService.getContacts();
+          setContacts(realContacts);
+          
+          // Generate conversations based on real contacts
+          const newConversations = realContacts.map((contact, index) => ({
+            id: `conversation_${index + 1}`,
+            participants: [currentUser.id, contact.id],
+            unreadCount: Math.floor(Math.random() * 5)
+          }));
+          
+          setConversations(newConversations);
+        } catch (error) {
+          console.error('Failed to fetch contacts:', error);
+          toast.error('Failed to load your contacts');
+        }
+      } else if (!pryvService && currentUser) {
+        // If service isn't ready yet, we'll wait for it
+        console.log('Waiting for Pryv service to initialize...');
+      } else {
+        // Reset state when user logs out
+        setContacts([]);
+        setConversations([]);
+        setCurrentConversation(null);
+        setMessages([]);
+      }
+    };
+
+    fetchContacts();
+  }, [pryvService, currentUser]);
 
   // Load messages when conversation changes
   useEffect(() => {
