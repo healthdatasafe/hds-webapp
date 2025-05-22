@@ -98,9 +98,7 @@ class PryvService {
       type: a.type,
       displayName: a.name,
       accessInfo: a,
-      status: 'online',
-      phone: '+1 (555) 987-6543',
-      organization: 'City Medical Center'
+      status: 'online'
     }));
     return contacts;
   }

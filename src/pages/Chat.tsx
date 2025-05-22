@@ -50,7 +50,9 @@ const Chat = () => {
   
   const otherParticipant = getOtherParticipant();
   const conversationName = currentConversation?.name || otherParticipant?.displayName || 'Unknown';
-  
+
+  const textDescription = otherParticipant?.accessInfo.clientData?.['app-web-auth:description']?.content;
+
   // Show loading state during initialization
   if (isLoading) {
     return (
@@ -85,7 +87,8 @@ const Chat = () => {
   
   // Helper function to render the permissions section
   const renderPermissions = () => {
-    if (!otherParticipant || !otherParticipant.permissions) {
+    if (!otherParticipant || !otherParticipant.accessInfo?.permissions) {
+      console.log(otherParticipant);
       return (
         <div className="space-y-4">
           <div className="flex justify-between">
@@ -95,61 +98,22 @@ const Chat = () => {
       );
     }
 
-    // Group permissions by category
-    const communicationPermissions = otherParticipant.permissions.filter(
-      perm => perm.category === 'communication'
-    );
-    
-    const dataPermissions = otherParticipant.permissions.filter(
-      perm => perm.category === 'data'
-    );
-
     return (
       <>
-        {communicationPermissions.length > 0 && (
+        {otherParticipant.accessInfo.permissions.length > 0 && (
           <div className="space-y-4">
-            <h3 className="text-lg font-bold mb-3">Authorizations</h3>
-            {communicationPermissions.map((permission, index) => (
+            <h3 className="text-lg font-bold mb-3">Permissions</h3>
+            {otherParticipant.accessInfo.permissions.map((permission, index) => (
               <div key={`comm-${index}`} className="flex justify-between">
-                <span>{permission.name}</span>
+                <span>{permission.streamId}</span>
                 <div className="space-x-3">
-                  {permission.actions.map((action, actionIndex) => (
-                    <span key={`action-${index}-${actionIndex}`} className="text-primary">
-                      {action}
-                    </span>
-                  ))}
+                  <span key={`level-${index}`} className="text-primary">
+                    {permission.level}
+                  </span>
                 </div>
               </div>
             ))}
           </div>
-        )}
-        
-        {dataPermissions.length > 0 && (
-          <>
-            <Separator className="my-4 bg-gray-800" />
-            
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-bold">Data Authorizations</h3>
-              <div className="bg-gray-700 rounded-full p-1 cursor-pointer">
-                <span className="text-xl">+</span>
-              </div>
-            </div>
-            
-            <div className="space-y-4 mt-3">
-              {dataPermissions.map((permission, index) => (
-                <div key={`data-${index}`} className="flex justify-between">
-                  <span>{permission.name}</span>
-                  <div className="space-x-3">
-                    {permission.actions.map((action, actionIndex) => (
-                      <span key={`action-${index}-${actionIndex}`} className="text-primary">
-                        {action}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </>
         )}
       </>
     );
@@ -204,15 +168,16 @@ const Chat = () => {
             />
             <h2 className="text-xl font-bold">{conversationName}</h2>
             
-            {otherParticipant?.phone && (
-              <a href={`tel:${otherParticipant.phone}`} className="text-primary underline mt-2">
-                {otherParticipant.phone}
-              </a>
-            )}
             
-            {otherParticipant?.organization && (
+            {otherParticipant?.accessInfo.type && (
               <p className="text-muted-foreground mt-1">
-                {otherParticipant.organization}
+                Type: {otherParticipant.accessInfo.type}
+              </p>
+            )}
+
+            {textDescription && (
+              <p className="text-white mt-1">
+                {textDescription}
               </p>
             )}
           </div>

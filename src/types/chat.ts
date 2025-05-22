@@ -32,8 +32,7 @@ export interface Contact {
   displayName: string;
   avatarUrl?: string;
   status?: 'online' | 'offline' | 'away';
-  phone?: string;
-  organization?: string;
+  accessInfo?: any;
   permissions?: Permission[];
 }
 
