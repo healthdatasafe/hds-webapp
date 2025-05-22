@@ -93,6 +93,11 @@ const Diary = () => {
         </div>
       );
     }
+
+    // Handle different content types
+    if (content != null) {
+      return <p className="text-gray-200">{content}</p>;
+    }
     
     return <p className="text-gray-400">No content available</p>;
   };
