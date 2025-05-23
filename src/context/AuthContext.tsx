@@ -25,6 +25,8 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -83,7 +85,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const personalConnection = await pryvService.authenticate(username, password);
       
       // Create user object from successful login
-      const mockUser: User = {
+      const hdsUser: User = {
         id: 'user_' + Math.random().toString(36).substr(2, 9),
         personalApiEndpoint: personalConnection.apiEndpoint as string,
         username,
@@ -92,9 +94,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         avatarUrl: undefined
       };
       
-      localStorage.setItem('chatUser', JSON.stringify(mockUser));
-      mockUser.pryvService = pryvService;
-      setCurrentUser(mockUser);
+      localStorage.setItem('chatUser', JSON.stringify(hdsUser));
+      hdsUser.pryvService = pryvService;
+      setCurrentUser(hdsUser);
       toast.success("Logged in successfully!");
       // navigate('/connections');
     } catch (error) {
@@ -110,19 +112,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     try {
       // Register with HDS using our service wrapper
-      /// await pryvService.authenticate();
-      
-      // Mock successful registration
-      const mockUser: User = {
+      const personalConnection = await pryvService.register(email, username, password);
+
+     // Create user object from successful register
+      const hdsUser: User = {
         id: 'user_' + Math.random().toString(36).substr(2, 9),
-        personalApiEndpoint: 'toto',
+        personalApiEndpoint: personalConnection.apiEndpoint as string,
         username,
         displayName: username,
         email,
+        avatarUrl: undefined
       };
       
-      localStorage.setItem('chatUser', JSON.stringify(mockUser));
-      setCurrentUser(mockUser);
+      localStorage.setItem('chatUser', JSON.stringify(hdsUser));
+      hdsUser.pryvService = pryvService;
+      setCurrentUser(hdsUser);
       toast.success("Account created successfully!");
       navigate('/connections');
     } catch (error) {

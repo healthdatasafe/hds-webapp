@@ -120,6 +120,31 @@ class PryvService {
     }
   }
   
+  // Register a user
+  async register(email: string, username: string, password: string) {
+    const host = await geRegistrationHost(this.service);
+    try {
+      // create user
+      const res = await Pryv.utils.superagent.post(host + 'users')
+        .send({
+          appId: this.config.appId,
+          username,
+          password,
+          email,
+          invitationtoken: 'enjoy',
+          languageCode: this.config.language || 'en',
+          referer: 'none'
+        });
+      if (res.body.apiEndpoint == null) throw new Error('Cannot find apiEndpoint in response');
+      this.pryvConnection = new Pryv.Connection(res.body.apiEndpoint);
+      this.setMonitorInitAccessesAndStreams();
+      return this.pryvConnection;
+    } catch (e) {
+      throw new Error('Failed creating user ' + host + 'users');
+    }
+  }
+
+
   // Store message in HDS
   async storeMessage(conversationId: string, message: any) {
     // In a real implementation, we would create events in HDS
@@ -188,3 +213,32 @@ class PryvService {
 }
 
 export default PryvService;
+
+/**
+ * Not really usefull for Open-Pryv.io kept if entreprise version becoms availble
+ * @returns {string} first available hosting
+ */
+async function geRegistrationHost (service) {
+  const superagent = Pryv.utils.superagent;
+  // get available hosting
+  const serviceInfo = await service.info();
+  const hostings = (await superagent.get(serviceInfo.register + 'hostings').set('accept', 'json')).body;
+  let hostingCandidate = null;
+  findOneHostingKey(hostings, 'N');
+  function findOneHostingKey (o, parentKey) {
+    for (const key of Object.keys(o)) {
+      if (parentKey === 'hostings') {
+        const hosting = o[key];
+        if (hosting.available) {
+          hostingCandidate = hosting;
+        }
+        return;
+      }
+      if (typeof o[key] !== 'string') {
+        findOneHostingKey(o[key], key);
+      }
+    }
+  }
+  if (hostingCandidate == null) throw Error('Cannot find hosting in: ' + JSON.stringify(hostings));
+  return hostingCandidate.availableCore;
+}
