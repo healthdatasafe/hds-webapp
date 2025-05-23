@@ -71,3 +71,14 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+
+## Setup HDS
+
+Add remote to update code on HDS
+  - `git remote add hds git@github.com:healthdatasafe/hds-webapp.git`
+
+Push new version to HDS 
+  - `git push -u hds master`
+
+Checkout HDS `gh-pages` branch in `./dist` folder 
+  - `git clone --single-branch --branch gh-pages git@github.com:healthdatasafe/hds-webapp.git ./dist`
