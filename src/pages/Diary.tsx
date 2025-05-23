@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import BottomNav from '@/components/navigation/BottomNav';
 import { useAuth } from '@/context/AuthContext';
-import PryvService from '@/services/pryvService';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatDistance } from 'date-fns';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -28,7 +27,6 @@ const Diary = () => {
   const [events, setEvents] = useState<PryvEvent[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const bottomRef = useRef<HTMLDivElement>(null);
-  const pryvServiceRef = useRef<PryvService | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [shouldAutoScroll, setShouldAutoScroll] = useState<boolean>(true);
   const prevEventsLengthRef = useRef<number>(0);
@@ -45,27 +43,18 @@ const Diary = () => {
   
   useEffect(() => {
     const loadEvents = async () => {
-      if (!currentUser) return;
       
+      if (!currentUser) return;
+     
       try {
         setLoading(true);
-        const pryvService = new PryvService({
-          serviceInfoUrl: 'https://demo.datasafe.dev/reg/service/info',
-          appId: 'health-data-safe',
-          language: 'en',
-        });
-        
-        // Store the pryvService reference for later use
-        pryvServiceRef.current = pryvService;
-        
-        // Authenticate with the stored endpoint
-        await pryvService.authenticateWithEndpoint(currentUser.personalApiEndpoint);
+
         
         // Set up interval to check for updates
         const updateEvents = () => {
-          if (pryvServiceRef.current) {
+          if (currentUser.pryvService) {
             // Sort events by time in ascending order (oldest to newest)
-            const sortedEvents = [...pryvServiceRef.current.events].sort((a, b) => a.time - b.time);
+            const sortedEvents = [...currentUser.pryvService.events].sort((a, b) => a.time - b.time);
             
             // If we have new events and should auto-scroll
             if (sortedEvents.length > prevEventsLengthRef.current && shouldAutoScroll) {

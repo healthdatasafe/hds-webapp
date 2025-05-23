@@ -9,7 +9,6 @@ import {
   Message 
 } from '@/types/chat';
 import { generateMockMessages } from '@/data/mockChatData';
-import PryvService from '@/services/pryvService';
 
 export const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
@@ -21,37 +20,18 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [messages, setMessages] = useState<Message[]>([]);
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
-  const [pryvService, setPryvService] = useState<PryvService | null>(null);
 
   // Initialize Pryv service when user is authenticated
   useEffect(() => {
-    if (currentUser) {
-      const service = new PryvService({
-        serviceInfoUrl: 'https://demo.datasafe.dev/reg/service/info',
-        appId: 'health-data-safe',
-        language: 'en',
-      });
-      
-      // Authenticate with the stored endpoint
-      service.authenticateWithEndpoint(currentUser.personalApiEndpoint)
-        .then(() => {
-          setPryvService(service);
-        })
-        .catch(err => {
-          console.error('Failed to authenticate with Pryv:', err);
-          toast.error('Failed to connect to your data service');
-        });
-    } else {
-      setPryvService(null);
-    }
+    // do something
   }, [currentUser]);
 
   // Fetch real contacts when pryvService is available
   useEffect(() => {
     const fetchContacts = async () => {
-      if (pryvService && currentUser) {
+      if (currentUser?.pryvService) {
         try {
-          const realContacts = await pryvService.getContacts();
+          const realContacts = await currentUser?.pryvService.getContacts();
           setContacts(realContacts);
           
           // Generate conversations based on real contacts
@@ -66,7 +46,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
           console.error('Failed to fetch contacts:', error);
           toast.error('Failed to load your contacts');
         }
-      } else if (!pryvService && currentUser) {
+      } else if (!currentUser?.pryvService) {
         // If service isn't ready yet, we'll wait for it
         console.log('Waiting for Pryv service to initialize...');
       } else {
@@ -79,7 +59,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     fetchContacts();
-  }, [pryvService, currentUser]);
+  }, [currentUser]);
 
   // Load messages when conversation changes
   useEffect(() => {

@@ -29,7 +29,6 @@ class PryvService {
   }
 
   async newEvent(event: any) {
-    console.log('New event received:', event);
     // Check if the event already exists in the array
     const existingIndex = this.events.findIndex(e => e.id === event.id);
     if (existingIndex >= 0) {

@@ -11,6 +11,7 @@ interface User {
   displayName: string;
   email: string;
   avatarUrl?: string;
+  pryvService?: any;
 }
 
 interface AuthContextType {
@@ -50,6 +51,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           try {
             // Use our custom service to authenticate
             await pryvService.authenticateWithEndpoint(parsedUser.personalApiEndpoint);
+            parsedUser.pryvService = pryvService;
             setCurrentUser(parsedUser);
           } catch (error) {
             // If verification fails, clear localStorage
@@ -91,6 +93,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       };
       
       localStorage.setItem('chatUser', JSON.stringify(mockUser));
+      mockUser.pryvService = pryvService;
       setCurrentUser(mockUser);
       toast.success("Logged in successfully!");
       // navigate('/connections');
