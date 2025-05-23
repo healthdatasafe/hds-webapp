@@ -40,6 +40,11 @@ const Diary = () => {
     const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
     setShouldAutoScroll(isNearBottom);
   };
+
+  function accessNameForId (accesId: string) {
+    if (!currentUser?.pryvService) return null;
+    return currentUser.pryvService.accessForId(accesId)?.name; 
+  }
   
   useEffect(() => {
     const loadEvents = async () => {
@@ -175,8 +180,13 @@ const Diary = () => {
                   )}
                   {renderEventContent(event)}
                   <p className="text-xs text-gray-400 mt-2">
-                    Created: {formatEventTime(event.created)}
+                    Created: {formatEventTime(event.created)} by {accessNameForId(event.createdBy)}
                   </p>
+                  {(event.created != event.modified) && (
+                    <p className="text-xs text-gray-400 mt-2">
+                    Modified: {formatEventTime(event.modified)} by {accessNameForId(event.modifiedBy)}
+                    </p>
+                  )}
                 </CardContent>
               </Card>
             ))}

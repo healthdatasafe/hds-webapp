@@ -22,10 +22,15 @@ class PryvService {
   private service: any = null;
   private monitor: any = null;
   events: any[] = [];
+  private accesses = {}; // accesses cache by id 
   
   constructor(config: PryvServiceConfig) {
     this.config = config;
     this.service = new Pryv.Service(this.config.serviceInfoUrl);
+  }
+
+  accessForId(id: string) {
+    return this.accesses[id];
   }
 
   async newEvent(event: any) {
@@ -40,9 +45,10 @@ class PryvService {
     }
   }
 
-  private async setMonitor() {
+  private async setMonitorInitAccessesAndStreams() {
     if (this.monitor) this.monitor.stop();
     if (!this.pryvConnection) return;
+    await this.getContacts(); // init accesses list (may be done asynchronusly)
     const eventsGetScope = {};
 
     // First, try to get existing events
@@ -85,7 +91,7 @@ class PryvService {
       }
       this.pryvConnection = potentialConnection;
       console.log('Authenticated with existing apiEndpoint');
-      await this.setMonitor();
+      await this.setMonitorInitAccessesAndStreams();
       return this.pryvConnection;
     } catch (error) {
       console.error('HDS authentication error:', error);
@@ -106,7 +112,7 @@ class PryvService {
       
       // Create a service object according to HDS docs
       this.pryvConnection = await this.service.login(username, password, this.config.appId);
-      await this.setMonitor();
+      await this.setMonitorInitAccessesAndStreams();
       return this.pryvConnection;
     } catch (error) {
       console.error('HDS authentication error:', error);
@@ -138,22 +144,27 @@ class PryvService {
   // Get the conversation list
   async getContacts() {
     try {
-      // Type the API call properly for TypeScript
-      const accessesApiCall: any = {
-        method: 'accesses.get',
-        params: {}
-      };
-      
-      const res = await this.pryvConnection.api([accessesApiCall]);
-      if (res[0].error) {
-        throw new Error(res[0].error.toString());
+      if (Object.keys(this.accesses).length === 0) {
+        // Type the API call properly for TypeScript
+        const accessesApiCall: any = {
+          method: 'accesses.get',
+          params: {}
+        };
+        
+        const res = await this.pryvConnection.api([accessesApiCall]);
+        if (res[0].error) {
+          throw new Error(res[0].error.toString());
+        }
+        
+        const accesses = res[0]?.accesses || [];
+        for (const access of accesses) {
+          this.accesses[access.id] = access;
+        }
       }
       
-      const accesses = res[0]?.accesses;
-      console.log(accesses);
       
       // Map to our Contact interface
-      const contacts = accesses.map((a: any) => ({
+      const contacts = Object.values(this.accesses).map((a: any) => ({
         id: a.id,
         username: a.name,
         displayName: a.name,
