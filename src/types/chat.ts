@@ -22,7 +22,6 @@ export interface Conversation {
 
 export interface Permission {
   name: string;
-  category: 'communication' | 'data' | 'other';
   actions: string[];
 }
 

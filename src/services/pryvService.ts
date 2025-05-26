@@ -198,8 +198,7 @@ class PryvService {
         accessInfo: a,
         // Map permissions from access if they exist
         permissions: a.permissions?.map((p: any) => ({
-          name: p.streamId || 'Unknown',
-          category: p.level.includes('read') ? 'data' : 'communication',
+          name: p.streamId === '*' ? 'All strems' : p.streamId,
           actions: [p.level]
         }))
       }));

@@ -39,7 +39,7 @@ const ContactDetailsDialog = ({ open, onOpenChange, contact }: ContactDetailsDia
                 <span>{permission.name}</span>
                 <div className="space-x-3">
                   <span key={`cat-${index}`} className="text-primary">
-                    {permission.category}
+                    level:
                   </span>
                   {permission.actions.map((action, actionIndex) => (
                     <span key={`action-${index}-${actionIndex}`} className="text-muted-foreground text-sm">
