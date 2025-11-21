@@ -165,7 +165,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setMessages(prev => [...prev, newMessage]);
     
     try {
-      // In a real app, we would send to Pryv.io here
+      // In a next step we would send to API here
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 300));
       

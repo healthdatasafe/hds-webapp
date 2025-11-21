@@ -10,7 +10,7 @@ export interface APPServiceConfig {
 
 class APPService {
   private config: APPServiceConfig;
-  private pryvConnection: any = null; // Using any to avoid TypeScript errors
+  private hdsConnection: any = null; // Using any to avoid TypeScript errors
   private service: any = null;
   private monitor: any = null;
   events: any[] = [];
@@ -39,13 +39,13 @@ class APPService {
 
   private async setMonitorInitAccessesAndStreams() {
     if (this.monitor) this.monitor.stop();
-    if (!this.pryvConnection) return;
+    if (!this.hdsConnection) return;
     await this.getContacts(); // init accesses list (may be done asynchronusly)
     const eventsGetScope = {};
 
     // First, try to get existing events
     try {
-      const result = await this.pryvConnection.api([{
+      const result = await this.hdsConnection.api([{
         method: 'events.get',
         params: {}
       }]);
@@ -57,7 +57,7 @@ class APPService {
       console.error('Error fetching initial events:', error);
     }
     
-    this.monitor = new Pryv.Monitor(this.pryvConnection, eventsGetScope)
+    this.monitor = new Pryv.Monitor(this.hdsConnection, eventsGetScope)
       .on('event', (event: any) => { this.newEvent(event); }) // event created or updated
       .on('streams', (streams: any) => { console.log('Streams updated:', streams)}) // streams structure changed
       .on('eventDelete', (event: any) => { 
@@ -81,10 +81,10 @@ class APPService {
       if (infos.error) {
         throw new Error('Failed validating existing user');
       }
-      this.pryvConnection = potentialConnection;
+      this.hdsConnection = potentialConnection;
       console.log('Authenticated with existing apiEndpoint');
       await this.setMonitorInitAccessesAndStreams();
-      return this.pryvConnection;
+      return this.hdsConnection;
     } catch (error) {
       console.error('HDS authentication error:', error);
       throw error;
@@ -103,9 +103,9 @@ class APPService {
       console.log('Service Infos', serviceInfo);
       
       // Create a service object according to HDS docs
-      this.pryvConnection = await this.service.login(username, password, this.config.appId);
+      this.hdsConnection = await this.service.login(username, password, this.config.appId);
       await this.setMonitorInitAccessesAndStreams();
-      return this.pryvConnection;
+      return this.hdsConnection;
     } catch (error) {
       console.error('HDS authentication error:', error);
       throw error;
@@ -128,9 +128,9 @@ class APPService {
           referer: 'none'
         });
       if (res.body.apiEndpoint == null) throw new Error('Cannot find apiEndpoint in response');
-      this.pryvConnection = new Pryv.Connection(res.body.apiEndpoint);
+      this.hdsConnection = new Pryv.Connection(res.body.apiEndpoint);
       this.setMonitorInitAccessesAndStreams();
-      return this.pryvConnection;
+      return this.hdsConnection;
     } catch (e) {
       throw new Error('Failed creating user ' + host + 'users');
     }
@@ -168,7 +168,7 @@ class APPService {
           params: {}
         };
         
-        const res = await this.pryvConnection.api([accessesApiCall]);
+        const res = await this.hdsConnection.api([accessesApiCall]);
         if (res[0].error) {
           throw new Error(res[0].error.toString());
         }
