@@ -46,5 +46,5 @@ export default {
   "misc.loading": "Chargement...",
   "misc.underConstruction": "Cette page est en construction.",
   "misc.returnHome": "Retour à l'accueil",
-  "misc.secureHealth": "Sécurisez vos données de santé avec un chiffrement de bout en bout et la confidentialité des données."
+  "misc.secureHealth": "Vos données sous votre contrôle, pour le bien commun."
 }

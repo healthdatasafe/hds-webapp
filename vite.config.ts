@@ -24,7 +24,7 @@ export default defineConfig(({ mode }) => {
     },
   }
   if (mode === 'backloop') {
-    config.plugins.push(backloop('mycomputer'));
+    config.plugins.push(backloop('hds-webapp'));
   }
   return config;
 });

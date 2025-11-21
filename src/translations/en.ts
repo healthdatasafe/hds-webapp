@@ -46,5 +46,5 @@ export default {
   "misc.loading": "Loading...",
   "misc.underConstruction": "This page is under construction.",
   "misc.returnHome": "Return to Home",
-  "misc.secureHealth": "Secure health data with end-to-end encryption and data privacy."
+  "misc.secureHealth": "Own your data Share for good."
 }
