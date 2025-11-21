@@ -25,7 +25,7 @@ Sharing data is accessible by the settings of the discussion, the patient can ch
 
 ##### Connections main screen
 
-![0- Connections main screen](mockups/0-Connections main screen.png)
+![0- Connections main screen](mockups/0-Connections-main-screen.png)
 
 ##### Diary
 
@@ -33,19 +33,19 @@ Sharing data is accessible by the settings of the discussion, the patient can ch
 
 ##### Chat with clinic
 
-![2- Chat with clinic](mockups/2-Chat with clinic.png)
+![2- Chat with clinic](mockups/2-Chat-with-clinic.png)
 
 ##### Chat with Dr
 
-![3- Chat with dr](mockups/3-Chat with dr.png)
+![3- Chat with dr](mockups/3-Chat-with-dr.png)
 
 ##### Connection on boarding
 
-![4- Connection on boarding](mockups/4-Connection on boarding.png)
+![4- Connection on boarding](mockups/4-Connection-on-boarding.png)
 
 ##### Chat with Program Research ... 
 
-![5- Chat with method algo](mockups/5-Chat with method algo.png)
+![5- Chat with method algo](mockups/5-Chat-with-method-algo.png)
 
 ##### Tasks
 
