@@ -18,7 +18,7 @@ Published on: [demo-app.datasafe.dev](demo-app.datasafe.dev)
 - Use [hds-lib-js](https://github.com/healthdatasafe/hds-lib-js) instead of pryv-lib
 - Better display of connections
 - Better display of diary based on hds-lib 
-- ⚠️ [FEATURES & MOCKUPS](docs/README.md)
+- ⚠️ [USE CASES & MOCKUPS](docs/README.md)
 
 
 
