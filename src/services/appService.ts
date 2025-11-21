@@ -1,32 +1,24 @@
 
-import 'https://pryv.github.io/lib-js/pryv-socket.io-monitor.js';
+import { HDService, pryv as Pryv} from 'hds-lib-js';
 
-// Add a declaration for the Pryv global variable to fix TypeScript errors
-declare global {
-  interface Window {
-    Pryv: any;
-  }
-  const Pryv: any;
-}
-
-export interface PryvServiceConfig {
+export interface APPServiceConfig {
   serviceInfoUrl: string;
   appId: string;
   language?: string;
   origin?: string;
 }
 
-class PryvService {
-  private config: PryvServiceConfig;
+class APPService {
+  private config: APPServiceConfig;
   private pryvConnection: any = null; // Using any to avoid TypeScript errors
   private service: any = null;
   private monitor: any = null;
   events: any[] = [];
   private accesses = {}; // accesses cache by id 
   
-  constructor(config: PryvServiceConfig) {
+  constructor(config: APPServiceConfig) {
     this.config = config;
-    this.service = new Pryv.Service(this.config.serviceInfoUrl);
+    this.service = new HDService(this.config.serviceInfoUrl);
   }
 
   accessForId(id: string) {
@@ -211,7 +203,7 @@ class PryvService {
   }
 }
 
-export default PryvService;
+export default APPService;
 
 /**
  * Not really usefull for Open-Pryv.io kept if entreprise version becoms availble

@@ -2,7 +2,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import PryvService from '@/services/pryvService';
+import APPService from '@/services/appService';
 
 interface User {
   id: string;
@@ -11,7 +11,7 @@ interface User {
   displayName: string;
   email: string;
   avatarUrl?: string;
-  pryvService?: any;
+  appService?: any;
 }
 
 interface AuthContextType {
@@ -32,8 +32,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const navigate = useNavigate();
 
-  // Initialize our custom PryvService wrapper
-  const pryvService = new PryvService({
+  // Initialize our custom APPService wrapper
+  const appService = new APPService({
     serviceInfoUrl: 'https://demo.datasafe.dev/reg/service/info',
     appId: 'health-data-safe',
     language: 'en',
@@ -52,8 +52,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           // Verify the session with HDS
           try {
             // Use our custom service to authenticate
-            await pryvService.authenticateWithEndpoint(parsedUser.personalApiEndpoint);
-            parsedUser.pryvService = pryvService;
+            await appService.authenticateWithEndpoint(parsedUser.personalApiEndpoint);
+            parsedUser.appService = appService;
             setCurrentUser(parsedUser);
           } catch (error) {
             // If verification fails, clear localStorage
@@ -82,7 +82,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const email = isEmail ? identifier : `${identifier}@example.com`;
       
       // Authenticate with HDS using our service
-      const personalConnection = await pryvService.authenticate(username, password);
+      const personalConnection = await appService.authenticate(username, password);
       
       // Create user object from successful login
       const hdsUser: User = {
@@ -95,7 +95,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       };
       
       localStorage.setItem('chatUser', JSON.stringify(hdsUser));
-      hdsUser.pryvService = pryvService;
+      hdsUser.appService = appService;
       setCurrentUser(hdsUser);
       toast.success("Logged in successfully!");
       // navigate('/connections');
@@ -112,7 +112,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     try {
       // Register with HDS using our service wrapper
-      const personalConnection = await pryvService.register(email, username, password);
+      const personalConnection = await appService.register(email, username, password);
 
      // Create user object from successful register
       const hdsUser: User = {
@@ -125,7 +125,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       };
       
       localStorage.setItem('chatUser', JSON.stringify(hdsUser));
-      hdsUser.pryvService = pryvService;
+      hdsUser.appService = appService;
       setCurrentUser(hdsUser);
       toast.success("Account created successfully!");
       navigate('/connections');

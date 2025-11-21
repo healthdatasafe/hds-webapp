@@ -42,8 +42,8 @@ const Diary = () => {
   };
 
   function accessNameForId (accesId: string) {
-    if (!currentUser?.pryvService) return null;
-    return currentUser.pryvService.accessForId(accesId)?.name; 
+    if (!currentUser?.appService) return null;
+    return currentUser.appService.accessForId(accesId)?.name; 
   }
   
   useEffect(() => {
@@ -57,9 +57,9 @@ const Diary = () => {
         
         // Set up interval to check for updates
         const updateEvents = () => {
-          if (currentUser.pryvService) {
+          if (currentUser.appService) {
             // Sort events by time in ascending order (oldest to newest)
-            const sortedEvents = [...currentUser.pryvService.events].sort((a, b) => a.time - b.time);
+            const sortedEvents = [...currentUser.appService.events].sort((a, b) => a.time - b.time);
             
             // If we have new events and should auto-scroll
             if (sortedEvents.length > prevEventsLengthRef.current && shouldAutoScroll) {

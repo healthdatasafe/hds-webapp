@@ -21,17 +21,17 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
 
-  // Initialize Pryv service when user is authenticated
+  // Initialize App service when user is authenticated
   useEffect(() => {
     // do something
   }, [currentUser]);
 
-  // Fetch real contacts when pryvService is available
+  // Fetch real contacts when appService is available
   useEffect(() => {
     const fetchContacts = async () => {
-      if (currentUser?.pryvService) {
+      if (currentUser?.appService) {
         try {
-          const realContacts = await currentUser?.pryvService.getContacts();
+          const realContacts = await currentUser?.appService.getContacts();
           setContacts(realContacts);
           
           // Generate conversations based on real contacts
@@ -46,9 +46,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
           console.error('Failed to fetch contacts:', error);
           toast.error('Failed to load your contacts');
         }
-      } else if (!currentUser?.pryvService) {
+      } else if (!currentUser?.appService) {
         // If service isn't ready yet, we'll wait for it
-        console.log('Waiting for Pryv service to initialize...');
+        console.log('Waiting for App service to initialize...');
       } else {
         // Reset state when user logs out
         setContacts([]);

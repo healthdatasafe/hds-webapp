@@ -21,8 +21,6 @@ Published on: [demo-app.datasafe.dev](demo-app.datasafe.dev)
 - ⚠️ [USE CASES & MOCKUPS](docs/README.md)
 
 
-
-
 ## Dev 
 
 - Setup dev environment with `./scripts/setup.sh`
