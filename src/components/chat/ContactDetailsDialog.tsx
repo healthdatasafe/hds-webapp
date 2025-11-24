@@ -1,10 +1,15 @@
 
 import React from 'react';
-import { Contact } from '@/types/chat';
+import Contact from '@/model/Contact';
 import Avatar from '@/components/common/Avatar';
 import { Trash2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
+
+export interface PermissionDisplay {
+  name: string;
+  actions: string[];
+}
 
 interface ContactDetailsDialogProps {
   open: boolean;
@@ -15,7 +20,12 @@ interface ContactDetailsDialogProps {
 const ContactDetailsDialog = ({ open, onOpenChange, contact }: ContactDetailsDialogProps) => {
   if (!contact) return null;
   
-  const textDescription = contact?.accessInfo?.clientData?.['app-web-auth:description']?.content;
+  const appWebAuthDescription = contact?.accessData?.clientData?.['app-web-auth:description']?.content || '';
+  
+  let textDescription = appWebAuthDescription || '';
+  const debugClientData = contact?.accessData?.clientData;
+  textDescription += 'Debug - clientData: ' + JSON.stringify(debugClientData, null, 2);
+
 
   // Helper function to render the permissions section
   const renderPermissions = () => {
@@ -29,12 +39,17 @@ const ContactDetailsDialog = ({ open, onOpenChange, contact }: ContactDetailsDia
       );
     }
 
+    const permissionDisplay: PermissionDisplay[] = contact.permissions?.map((p: any) => ({
+      name: p.streamId === '*' ? 'All data' : p.streamId,
+      actions: [p.level]
+    }))
+
     return (
       <>
-        {contact.permissions.length > 0 && (
+        {permissionDisplay.length > 0 && (
           <div className="space-y-4">
             <h3 className="text-lg font-bold mb-3">Permissions</h3>
-            {contact.permissions.map((permission, index) => (
+            {permissionDisplay.map((permission, index) => (
               <div key={`perm-${index}`} className="flex justify-between">
                 <span>{permission.name}</span>
                 <div className="space-x-3">
@@ -67,9 +82,9 @@ const ContactDetailsDialog = ({ open, onOpenChange, contact }: ContactDetailsDia
           />
           <h2 className="text-xl font-bold">{contact.displayName}</h2>
           
-          {contact?.accessInfo?.type && (
+          {contact?.accessData?.type && (
             <p className="text-muted-foreground mt-1">
-              Type: {contact.accessInfo.type}
+              Type: {contact.accessData.type}
             </p>
           )}
 

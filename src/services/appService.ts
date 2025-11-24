@@ -1,5 +1,9 @@
 
 import { HDService, pryv as Pryv} from 'hds-lib-js';
+import Contact from '@/model/Contact';
+
+// This was developped before hds-lib 
+// most of it should be revewed based on hds-lib logic
 
 export interface APPServiceConfig {
   serviceInfoUrl: string;
@@ -176,24 +180,15 @@ class APPService {
         const accesses = res[0]?.accesses || [];
         for (const access of accesses) {
           this.accesses[access.id] = access;
+          console.log(access);
         }
       }
       
       
       // Map to our Contact interface
-      const contacts = Object.values(this.accesses).map((a: any) => ({
-        id: a.id,
-        username: a.name,
-        displayName: a.name,
-        type: a.type,
-        status: 'online' as 'online' | 'offline' | 'away', // Cast to the union type
-        accessInfo: a,
-        // Map permissions from access if they exist
-        permissions: a.permissions?.map((p: any) => ({
-          name: p.streamId === '*' ? 'All strems' : p.streamId,
-          actions: [p.level]
-        }))
-      }));
+      const contacts = Object.values(this.accesses).map((access: Pryv.Access) => {
+        return new Contact(access)
+      });
       
       return contacts;
     } catch (error) {

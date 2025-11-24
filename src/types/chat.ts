@@ -1,5 +1,6 @@
 
 // Chat related type definitions
+import type Contact from '@/model/Contact';
 
 export interface Message {
   id: string;
@@ -20,23 +21,7 @@ export interface Conversation {
   unreadCount: number;
 }
 
-export interface Permission {
-  name: string;
-  actions: string[];
-}
 
-export interface Contact {
-  id: string;
-  username: string;
-  displayName: string;
-  avatarUrl?: string;
-  status?: 'online' | 'offline' | 'away';
-  accessInfo?: any;
-  permissions?: Permission[];
-  type?: string;
-  phone?: string;
-  organization?: string;
-}
 
 export interface ChatContextType {
   conversations: Conversation[];

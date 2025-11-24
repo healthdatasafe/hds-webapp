@@ -16,6 +16,7 @@ Published on: [demo-app.datasafe.dev](demo-app.datasafe.dev)
 ### Todos
 
 - Use [hds-lib-js](https://github.com/healthdatasafe/hds-lib-js) instead of pryv-lib
+  - First step done, still the app is using Pryv Connection's logic and not yet Collectors
 - Better display of connections
 - Better display of diary based on hds-lib 
 - ⚠️ [USE CASES & MOCKUPS](docs/README.md)
