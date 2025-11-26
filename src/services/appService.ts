@@ -1,5 +1,5 @@
 
-import { HDService, pryv as Pryv} from 'hds-lib-js';
+import HDSLib, { HDSService, pryv as Pryv } from 'hds-lib-js';
 import Contact from '@/model/Contact';
 
 // This was developped before hds-lib 
@@ -14,15 +14,17 @@ export interface APPServiceConfig {
 
 class APPService {
   private config: APPServiceConfig;
-  private hdsConnection: any = null; // Using any to avoid TypeScript errors
+  private hdsConnection: Pryv.Connection = null; 
+  private appClient: HDSLib.appTemplates.AppClientAccount = null;
   private service: any = null;
   private monitor: any = null;
   events: any[] = [];
   private accesses = {}; // accesses cache by id 
+  private contacts = [];
   
   constructor(config: APPServiceConfig) {
     this.config = config;
-    this.service = new HDService(this.config.serviceInfoUrl);
+    this.service = new HDSService(this.config.serviceInfoUrl);
   }
 
   accessForId(id: string) {
@@ -88,6 +90,13 @@ class APPService {
       this.hdsConnection = potentialConnection;
       console.log('Authenticated with existing apiEndpoint');
       await this.setMonitorInitAccessesAndStreams();
+
+      const APP_CLIENT_NAME = 'HDS Patient app PoC';
+      const APP_CLIENT_STREAMID = 'app-client-dr-form'; // also used as "appId"
+
+      // set 
+      this.appClient = await HDSLib.appTemplates.AppClientAccount.newFromConnection(APP_CLIENT_STREAMID, this.hdsConnection, APP_CLIENT_NAME);
+
       return this.hdsConnection;
     } catch (error) {
       console.error('HDS authentication error:', error);
@@ -163,38 +172,19 @@ class APPService {
   }
 
   // Get the conversation list
-  async getContacts() {
-    try {
-      if (Object.keys(this.accesses).length === 0) {
-        // Type the API call properly for TypeScript
-        const accessesApiCall: any = {
-          method: 'accesses.get',
-          params: {}
-        };
-        
-        const res = await this.hdsConnection.api([accessesApiCall]);
-        if (res[0].error) {
-          throw new Error(res[0].error.toString());
-        }
-        
-        const accesses = res[0]?.accesses || [];
-        for (const access of accesses) {
-          this.accesses[access.id] = access;
-          console.log(access);
-        }
-      }
-      
-      
-      // Map to our Contact interface
-      const contacts = Object.values(this.accesses).map((access: Pryv.Access) => {
-        return new Contact(access)
-      });
-      
-      return contacts;
-    } catch (error) {
-      console.error('Failed to fetch contacts:', error);
-      throw error;
+  async getContacts(forceRefresh: boolean = true): Promise<Contact[]> {
+    if (! this.appClient) return [];
+    if (!forceRefresh && this.contacts.length > 0) return this.contacts;
+    // initialize model (may be done elswhere)
+    await HDSLib.initHDSModel();
+
+    this.contacts = [];
+    const collectorClients = await this.appClient.getCollectorClients();
+    for (const collectorClient of collectorClients) {
+      const contact = Contact.createFromCollectorClients(collectorClient);
+      this.contacts.push(contact);
     }
+    return this.contacts;
   }
 }
 

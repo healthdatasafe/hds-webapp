@@ -1,23 +1,51 @@
 import type { pryv as Pryv } from 'hds-lib-js';
+import HDSLib from 'hds-lib-js';
+
+
+interface DisplayInfo {
+  key: string,
+  content: string
+}
 
 export default class Contact {
   id: string;
-  username: string;
   displayName: string;
-  avatarUrl?: string;
-  status?: 'online' | 'offline' | 'away';
+  displayInfos: DisplayInfo[];
   accessData?: Pryv.Access;
-  permissions?: Pryv.Permission[];
-  type?: string;
-  phone?: string;
-  organization?: string;
+  collectorClient?: HDSLib.appTemplates.CollectorClient;
+  avatarUrl?: string;
 
-  constructor (access: Pryv.Access) {
+  constructor (access?: Pryv.Access) {
     this.accessData = access;
-    this.id = access.id;
-    this.username = access.name;
-    this.displayName = access.name;
-    this.type = access.type;
-    this.permissions = access.permissions;
+    this.id = access?.id;
+    this.displayName = access?.name;
+
+    this.displayInfos = [];
+    if (access?.type) {
+      this.displayInfos.push({
+        key: 'Type',
+        content: access.type,
+        });
+    }
+  }
+
+  static createFromCollectorClients(cClient: HDSLib.appTemplates.CollectorClient) {
+    const contact = new Contact();
+    contact.id = cClient.key;
+    contact.accessData = cClient.accessData;
+    const formTitle = HDSLib.l(cClient.requestData.title);
+    contact.displayName = cClient.requestData.requester.name + ' - ' + formTitle;
+    contact.collectorClient = cClient;
+    contact.displayInfos = [{
+      key: 'Status',
+      content: cClient.status,
+    }, {
+      key: 'Description',
+      content: HDSLib.l(cClient.requestData.description)
+    }, {
+      key: 'Consent',
+      content: HDSLib.l(cClient.requestData.consent)
+    }];
+    return contact;
   }
 }

@@ -1,5 +1,4 @@
 
-import React from 'react';
 import Contact from '@/model/Contact';
 import Avatar from '@/components/common/Avatar';
 import { Trash2 } from 'lucide-react';
@@ -22,14 +21,13 @@ const ContactDetailsDialog = ({ open, onOpenChange, contact }: ContactDetailsDia
   
   const appWebAuthDescription = contact?.accessData?.clientData?.['app-web-auth:description']?.content || '';
   
-  let textDescription = appWebAuthDescription || '';
-  const debugClientData = contact?.accessData?.clientData;
-  textDescription += 'Debug - clientData: ' + JSON.stringify(debugClientData, null, 2);
-
+  const textDescription = appWebAuthDescription || '';
+  
+  console.log('>> DEBUG - clientData;', contact?.accessData?.clientData);
 
   // Helper function to render the permissions section
   const renderPermissions = () => {
-    if (!contact || !contact.permissions) {
+    if (!contact || !contact.accessData?.permissions) {
       return (
         <div className="space-y-4">
           <div className="flex justify-between">
@@ -38,9 +36,9 @@ const ContactDetailsDialog = ({ open, onOpenChange, contact }: ContactDetailsDia
         </div>
       );
     }
-
-    const permissionDisplay: PermissionDisplay[] = contact.permissions?.map((p: any) => ({
-      name: p.streamId === '*' ? 'All data' : p.streamId,
+    console.log('>> DEBUG Permissions', contact.collectorClient.requestData.permissions);
+    const permissionDisplay: PermissionDisplay[] = contact.collectorClient.requestData.permissions?.map((p: any) => ({
+      name: p.streamId === '*' ? 'All data' : p.defaultName || p.streamId,
       actions: [p.level]
     }))
 
@@ -82,10 +80,11 @@ const ContactDetailsDialog = ({ open, onOpenChange, contact }: ContactDetailsDia
           />
           <h2 className="text-xl font-bold">{contact.displayName}</h2>
           
-          {contact?.accessData?.type && (
-            <p className="text-muted-foreground mt-1">
-              Type: {contact.accessData.type}
-            </p>
+          {contact.displayInfos.map((info) => (
+              <p className="text-muted-foreground mt-1">
+                {info.key}: {info.content}
+              </p>
+            )
           )}
 
           {textDescription && (
