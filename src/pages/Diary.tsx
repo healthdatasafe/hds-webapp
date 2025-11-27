@@ -7,24 +7,13 @@ import { useAuth } from '@/context/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatDistance } from 'date-fns';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import type {pryv as Pryv} from 'hds-lib-js';
 
-// Interface for Pryv events
-interface PryvEvent {
-  id: string;
-  streamId: string;
-  type: string;
-  content: any;
-  time: number;
-  created: number;
-  modified?: number;
-  tags?: string[];
-  description?: string;
-}
 
 const Diary = () => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
-  const [events, setEvents] = useState<PryvEvent[]>([]);
+  const [events, setEvents] = useState<Pryv.Event[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const bottomRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -116,7 +105,7 @@ const Diary = () => {
     return formatDistance(date, new Date(), { addSuffix: true });
   };
   
-  const renderEventContent = (event: PryvEvent) => {
+  const renderEventContent = (event: Pryv.Event) => {
     const { type, content } = event;
     
     // Handle different content types

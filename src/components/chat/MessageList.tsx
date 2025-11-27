@@ -47,7 +47,7 @@ const MessageList = ({ hideHeader = false }: MessageListProps) => {
   const otherParticipantId = currentConversation?.participants.find(
     id => id !== contacts.find(c => c.id === id)?.id
   );
-  const otherParticipant = contacts.find(contact => contact.id === otherParticipantId);
+  const contact = contacts.find(contact => contact.id === otherParticipantId);
   
   if (messages.length === 0) {
     return (
@@ -63,13 +63,13 @@ const MessageList = ({ hideHeader = false }: MessageListProps) => {
       {!hideHeader && currentConversation && (
         <div className="sticky top-0 z-10 bg-[#222] border-b border-gray-800 pb-2 mb-4 flex items-center">
           <Avatar 
-            name={otherParticipant?.displayName || "Contact"}
-            src={otherParticipant?.avatarUrl}
+            name={contact?.displayName || "Contact"}
+            src={contact?.avatarUrl}
             className="h-12 w-12 mr-3"
           />
           <div className="flex-1">
             <h3 className="font-semibold text-lg text-white">
-              {otherParticipant?.displayName || "Contact"}
+              {contact?.displayName || "Contact"}
             </h3>
           </div>
         </div>

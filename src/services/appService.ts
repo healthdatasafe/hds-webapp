@@ -31,7 +31,7 @@ class APPService {
     return this.accesses[id];
   }
 
-  async newEvent(event: any) {
+  async newEvent(event: Pryv.Event) {
     // Check if the event already exists in the array
     const existingIndex = this.events.findIndex(e => e.id === event.id);
     if (existingIndex >= 0) {
@@ -65,7 +65,7 @@ class APPService {
     
     this.monitor = new Pryv.Monitor(this.hdsConnection, eventsGetScope)
       .on('event', (event: any) => { this.newEvent(event); }) // event created or updated
-      .on('streams', (streams: any) => { console.log('Streams updated:', streams)}) // streams structure changed
+      .on('streams', (streams: any) => { console.log('****** Streams updated:', streams)}) // streams structure changed
       .on('eventDelete', (event: any) => { 
         console.log('Event deleted:', event);
         // Remove the event from our array

@@ -2,10 +2,10 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { useAuth } from './AuthContext';
 import { toast } from 'sonner';
+import type Contact from '@/model/Contact';
 import { 
   ChatContextType, 
-  Conversation, 
-  Contact, 
+  Conversation,
   Message 
 } from '@/types/chat';
 import { generateMockMessages } from '@/data/mockChatData';
@@ -65,6 +65,11 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     if (currentConversation) {
       setIsLoadingMessages(true);
+
+      // TODO
+      // - Get Contact 
+      // - Get Event covering Authorization Scope
+
       
       // Simulate API delay
       setTimeout(() => {
