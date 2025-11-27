@@ -8,12 +8,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { formatDistance } from 'date-fns';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import type {pryv as Pryv} from 'hds-lib-js';
+import ChatItem from '@/model/ChatItem';
 
 
 const Diary = () => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
-  const [events, setEvents] = useState<Pryv.Event[]>([]);
+  const [chatItems, setChatItems] = useState<ChatItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const bottomRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -49,9 +50,14 @@ const Diary = () => {
           if (currentUser.appService) {
             // Sort events by time in ascending order (oldest to newest)
             const sortedEvents = [...currentUser.appService.events].sort((a, b) => a.time - b.time);
-            
+            const newChatItems = [];
+            for (const event of sortedEvents) {
+              const chatItem = ChatItem.fromEvent(event);
+              if (chatItem) newChatItems.push(chatItem);
+            }
+
             // If we have new events and should auto-scroll
-            if (sortedEvents.length > prevEventsLengthRef.current && shouldAutoScroll) {
+            if (newChatItems.length > prevEventsLengthRef.current && shouldAutoScroll) {
               // Set timeout to allow React to render new events before scrolling
               setTimeout(() => {
                 bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -59,8 +65,8 @@ const Diary = () => {
             }
             
             // Update previous length reference
-            prevEventsLengthRef.current = sortedEvents.length;
-            setEvents(sortedEvents);
+            prevEventsLengthRef.current = newChatItems.length;
+            setChatItems(newChatItems);
           }
         };
         
@@ -105,8 +111,8 @@ const Diary = () => {
     return formatDistance(date, new Date(), { addSuffix: true });
   };
   
-  const renderEventContent = (event: Pryv.Event) => {
-    const { type, content } = event;
+  const renderChatItem = (chatItem: ChatItem) => {
+    const { type, content } = chatItem;
     
     // Handle different content types
     if (typeof content === 'string') {
@@ -119,7 +125,7 @@ const Diary = () => {
           {Object.entries(content).map(([key, value]) => (
             <div key={key} className="flex">
               <span className="font-medium text-gray-400 w-24">{key}:</span>
-              <span className="text-gray-200">{value?.toString()}</span>
+              <span className="text-gray-200">{JSON.stringify(value)}</span>
             </div>
           ))}
         </div>
@@ -128,7 +134,7 @@ const Diary = () => {
 
     // Handle different content types
     if (content != null) {
-      return <p className="text-gray-200">{content}</p>;
+      return <p className="text-gray-200">{JSON.stringify(content)}</p>;
     }
     
     return <p className="text-gray-400">No content available</p>;
@@ -147,33 +153,30 @@ const Diary = () => {
           <div className="flex justify-center items-center h-40">
             <div className="animate-spin h-8 w-8 border-t-2 border-b-2 border-red-500 rounded-full"></div>
           </div>
-        ) : events.length > 0 ? (
+        ) : chatItems.length > 0 ? (
           <div className="space-y-4">
-            {events.map((event) => (
-              <Card key={event.id} className="bg-[#222] border-gray-700">
+            {chatItems.map((chatItem) => (
+              <Card key={chatItem.id} className="bg-[#222] border-gray-700">
                 <CardHeader className="pb-2">
                   <div className="flex justify-between items-start">
                     <div>
                       <CardTitle className="text-md text-white">
-                        {event.streamId || 'Unknown stream'}
+                        {chatItem.title || 'Unknown stream'}
                       </CardTitle>
                       <CardDescription>
-                        {event.type} • {getTimeAgo(event.time)}
+                        {chatItem.description} • {getTimeAgo(chatItem.time)}
                       </CardDescription>
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  {event.description && (
-                    <p className="text-sm text-gray-300 mb-2">{event.description}</p>
-                  )}
-                  {renderEventContent(event)}
+                  {renderChatItem(chatItem)}
                   <p className="text-xs text-gray-400 mt-2">
-                    Created: {formatEventTime(event.created)} by {accessNameForId(event.createdBy)}
+                    Created: {formatEventTime(chatItem.event.created)} by {accessNameForId(chatItem.event.createdBy)}
                   </p>
-                  {(event.created != event.modified) && (
+                  {(chatItem.event.created != chatItem.event.modified) && (
                     <p className="text-xs text-gray-400 mt-2">
-                    Modified: {formatEventTime(event.modified)} by {accessNameForId(event.modifiedBy)}
+                    Modified: {formatEventTime(chatItem.event.modified)} by {accessNameForId(chatItem.event.modifiedBy)}
                     </p>
                   )}
                 </CardContent>

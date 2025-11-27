@@ -18,7 +18,7 @@ class APPService {
   private appClient: HDSLib.appTemplates.AppClientAccount = null;
   private service: any = null;
   private monitor: any = null;
-  events: any[] = [];
+  events: Pryv.Event[] = [];
   private accesses = {}; // accesses cache by id 
   private contacts = [];
   
