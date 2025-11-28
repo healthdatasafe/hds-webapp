@@ -115,17 +115,17 @@ const Diary = () => {
     const { type, content } = chatItem;
     
     // Handle different content types
-    if (typeof content === 'string') {
+    if (type === 'string') {
       return <p className="text-gray-200">{content}</p>;
     }
     
-    if (typeof content === 'object') {
+    if (type === 'keyValue') {
       return (
         <div className="space-y-1">
           {Object.entries(content).map(([key, value]) => (
             <div key={key} className="flex">
               <span className="font-medium text-gray-400 w-24">{key}:</span>
-              <span className="text-gray-200">{JSON.stringify(value)}</span>
+              <span className="text-gray-200">{value}</span>
             </div>
           ))}
         </div>

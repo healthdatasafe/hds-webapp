@@ -15,7 +15,7 @@ export default class ChatItem {
   description: string;
   time: number;
   itemDef?: HDSItemDef;
-  type: 'string';
+  type: 'string' | 'keyValue';
   content: any;
 
   /**
@@ -26,21 +26,38 @@ export default class ChatItem {
   constructor(event: Pryv.Event) {
     this.id = event.id;
     this.event = event;
-    this.title = event.streamId;
-    this.description = event.type;
+    this.title = 'stremId: ' + event.streamId;
+    this.description = 'type: ' + event.type;
     this.time = event.time;
     this.type = 'string';
-    this.content = JSON.stringify(event.content); 
+    this.content = JSON.stringify(event.content, null, 2); 
   }
 
   static fromEvent(event: Pryv.Event) {
     if (ignore(event)) return null;
     const chatItem = new ChatItem(event);
+
+    // is an event in HDS Model
     const itemDef = HDSLib.getHDSModel().itemsDefs.forEvent(event, false);
-    if (!itemDef) { return chatItem; }
-    chatItem.title = itemDef.label;
-    chatItem.description = itemDef.description;
-    chatItem.content = getContentForEvent(event, itemDef);
+    if (itemDef) {
+      chatItem.title = itemDef.label;
+      chatItem.description = itemDef.description;
+      chatItem.content = getContentForEvent(event, itemDef);
+      return chatItem;
+    }
+
+    // is a collector-client-request
+    if (event.type === 'request/collector-client-v1') {
+      const request = event.content.requesterEventData.content;
+      chatItem.title = 'Request for connection';
+      chatItem.description = HDSLib.l(request.title);
+      chatItem.type = 'keyValue';
+      chatItem.content = {
+        'From': request.requester.name,
+        'Info': HDSLib.l(request.description),
+        'Status': event.content.status
+      }
+    }
     return chatItem;
   }
 }
